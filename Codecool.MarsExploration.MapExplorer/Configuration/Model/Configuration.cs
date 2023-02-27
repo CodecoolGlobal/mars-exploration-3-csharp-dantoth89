@@ -4,4 +4,4 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.Model;
 
 public record Configuration(string MapFilePath, Coordinate LandingSpot, IEnumerable<string> NeededResourcesSymbols, int TimeoutSteps);
 
-//?+ rover starting coordinate
+
