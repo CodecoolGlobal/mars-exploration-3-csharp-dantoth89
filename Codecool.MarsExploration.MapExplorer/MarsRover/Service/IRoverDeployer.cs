@@ -1,10 +1,11 @@
+using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
+using Codecool.MarsExploration.MapGenerator.MapElements.Model;
+
 namespace Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 
 public interface IRoverDeployer
 {
-    MarsRoverModel DeployMarsRover();
-    //Constructor with Configuration
-    //Deploy method return with MarsRover
-    //TESTS
+    MarsRoverModel DeployMarsRover(int numberOfRoversDeployed, Map map);
+
 }
