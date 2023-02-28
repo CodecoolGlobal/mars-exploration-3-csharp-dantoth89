@@ -26,7 +26,7 @@ public class MapLoaderTests
         var map = _mapLoader.Load(filepath);
         Console.WriteLine(filepath);
         
-        SortedSet<string> expected = new SortedSet<string>{"#"," ","&","%","*"};
+        SortedSet<string> expected = new SortedSet<string>{"#",null,"&","%","*"};
         SortedSet<string> actual = new SortedSet<string>();
         
         for (int i = 0; i < map.Representation.GetLength(0); i++)
