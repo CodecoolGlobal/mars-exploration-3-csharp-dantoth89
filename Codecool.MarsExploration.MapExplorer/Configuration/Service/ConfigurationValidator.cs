@@ -36,7 +36,7 @@ public class ConfigurationValidator:IConfigurationValidator
     
     private bool LandingSpotHasFreeAdjacentCoordinate(Coordinate landingSpot, Map map)
     {
-        return _coordinateCalculator.GetAdjacentCoordinates(landingSpot, 3).Any(coordinate => map.GetByCoordinate(coordinate) is null);
+        return _coordinateCalculator.GetAdjacentCoordinates(landingSpot, map.Dimension).Any(coordinate => map.GetByCoordinate(coordinate) is null);
     }
     
     private bool ResourcesAreNotEmpty(IEnumerable<string> resources)
