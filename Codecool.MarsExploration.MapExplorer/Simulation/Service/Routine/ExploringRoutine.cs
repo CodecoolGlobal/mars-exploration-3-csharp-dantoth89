@@ -16,6 +16,24 @@ public class ExploringRoutine : IExploringRoutine
         return new Coordinate(central, central);
     }
     
+    public Coordinate ExploreMovement(SimulationContext simulationContext, IEnumerable<Coordinate> possiblePlaces)
+    {
+        Coordinate nextStep = new Coordinate(-1, -1);
+        if (_idealStartingPlace == null)
+        {
+            _idealStartingPlace = CalculateIdealStartingPlace(simulationContext);
+        }
+        var targetPlaces = GenerateCheckpoints(simulationContext, _idealStartingPlace);
+        if (_reachedTarget < 0)
+        {
+            nextStep = ReachTargetPlace(simulationContext, _idealStartingPlace, possiblePlaces);
+        }
+        else
+            nextStep = ReachTargetPlace(simulationContext, targetPlaces[_reachedTarget], possiblePlaces);
+
+        return nextStep;
+    }
+    
     private Coordinate CalculateIdealStartingPlace(SimulationContext simulationContext)
     {
         var currentPosition = simulationContext.Rover.CurrentPosition;
@@ -38,6 +56,69 @@ public class ExploringRoutine : IExploringRoutine
         }
         else
             return CalculateMapCentral(simulationContext);
+    }
+    
+    
+    private Coordinate? ReachTargetPlace(SimulationContext simulationContext, Coordinate idealTargetPlace,
+        IEnumerable<Coordinate> possiblePlaces)
+    {
+        var x = simulationContext.Rover.CurrentPosition.X;
+        var y = simulationContext.Rover.CurrentPosition.Y;
+        
+            if (x > idealTargetPlace.X)
+                x--;
+            if (x < idealTargetPlace.X)
+                x++;
+            if (y > idealTargetPlace.Y)
+                y--;
+            if (y < idealTargetPlace.Y)
+                y++;
+            
+            if (x == idealTargetPlace.X && y == idealTargetPlace.Y)
+            {
+                _reachedTarget++;
+                Console.WriteLine("reachedTarget: " +_reachedTarget);
+                Console.WriteLine(idealTargetPlace);
+            }
+        return Move(simulationContext, possiblePlaces, x, y, idealTargetPlace);
+    }
+
+    private Coordinate Move(SimulationContext simulationContext, IEnumerable<Coordinate> possiblePlaces, int x, int y, Coordinate target)
+    {
+        if (possiblePlaces.Contains(new Coordinate(x, y)) 
+            &&
+            !simulationContext.VisitedPlaces.Contains(new Coordinate(x, y)))
+            return new Coordinate(x, y);
+        else
+         {              
+        var commonPossiblePlaces =
+            possiblePlaces.Intersect(GetNotOccupiedNeighboursOfNextStep(simulationContext));
+         if (commonPossiblePlaces.Any())
+           return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
+         else
+           return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
+         }
+    }
+
+    private IEnumerable<Coordinate> GetNotOccupiedNeighboursOfNextStep(SimulationContext simulationContext)
+    {
+        var adjacentCoordinates = _coordinateCalculator.GetAdjacentCoordinates(simulationContext.Rover.CurrentPosition,
+            simulationContext.Map.Dimension, 1);
+        return adjacentCoordinates.Where(coord => simulationContext.Map.Representation[coord.X, coord.Y] == null);
+    }
+
+    private Coordinate GetNextStepVisitedOrNot(SimulationContext simulationContext,
+        IEnumerable<Coordinate> possiblePlaces, Coordinate target)
+    {
+        foreach (var place in possiblePlaces)
+        {
+            if (!simulationContext.VisitedPlaces.Contains(place))
+            {
+                return CalculateBestPossiblePlace(target, possiblePlaces.Except(simulationContext.VisitedPlaces));
+            }
+        }
+
+        return CalculateBestPossiblePlace(target, possiblePlaces);
     }
     
     private List<Coordinate> GenerateCheckpoints(SimulationContext simulationContext, Coordinate startingPlace)
@@ -151,6 +232,8 @@ public class ExploringRoutine : IExploringRoutine
         }
         return distances.MinBy(pair => pair.Value).Key;
     }
+    
+    
 
 
 }
