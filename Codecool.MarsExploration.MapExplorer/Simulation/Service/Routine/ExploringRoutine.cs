@@ -15,5 +15,28 @@ public class ExploringRoutine : IExploringRoutine
         var central = (int)sizeOfMap / 2;
         return new Coordinate(central, central);
     }
-
+    
+    private Coordinate CalculateIdealStartingPlace(SimulationContext simulationContext)
+    {
+        var currentPosition = simulationContext.Rover.CurrentPosition;
+        if (currentPosition.X < simulationContext.Map.Dimension / 4)
+        {
+            if ((currentPosition.Y < simulationContext.Map.Dimension / 4))
+                return new Coordinate(1 + simulationContext.Rover.Sight, 1 + simulationContext.Rover.Sight);
+            else
+                return new Coordinate(1 + simulationContext.Rover.Sight,
+                    simulationContext.Map.Dimension - simulationContext.Rover.Sight);
+        }
+        else if (currentPosition.X > simulationContext.Map.Dimension / 4 * 3)
+        {
+            if ((currentPosition.Y < simulationContext.Map.Dimension / 4))
+                return new Coordinate(simulationContext.Map.Dimension - simulationContext.Rover.Sight,
+                    1 + simulationContext.Rover.Sight);
+            else
+                return new Coordinate(simulationContext.Map.Dimension - simulationContext.Rover.Sight,
+                    simulationContext.Map.Dimension - simulationContext.Rover.Sight);
+        }
+        else
+            return CalculateMapCentral(simulationContext);
+    }
 }
