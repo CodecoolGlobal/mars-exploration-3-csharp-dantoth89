@@ -1,4 +1,4 @@
-﻿namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine;
+﻿namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
