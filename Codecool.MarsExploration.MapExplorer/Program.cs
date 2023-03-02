@@ -40,6 +40,11 @@ class Program
         // File.Delete($@"{WorkDir}\Resources\message.txt");
        var simCont= _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1,_simulationContext);
         _returnSimulator.ReturningSimulator(simCont);
-        Console.WriteLine(_mapLoader.Load(_mapFile));
+        var map = _mapLoader.Load(_mapFile);
+        foreach (var visited in simCont.VisitedPlaces)
+        {
+            map.Representation[visited.Y, visited.X] = "0";
+        }
+        Console.WriteLine(map);
     }
 }
