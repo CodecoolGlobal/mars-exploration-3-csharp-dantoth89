@@ -1,5 +1,6 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Configuration.Service;
+using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
@@ -10,10 +11,7 @@ using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Returning;
 using Codecool.MarsExploration.MapExplorer.SimulationRepository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
-<<<<<<< HEAD
-=======
 
->>>>>>> db0c61ef0ef669618421e49f8d7335267b615d87
 namespace Codecool.MarsExploration.MapExplorer;
 
 class Program
@@ -24,6 +22,7 @@ class Program
     private static Coordinate _landingSpot = new Coordinate(15, 15);
     private static ConfigurationModel _configuration =
         new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
+
     private static SimulationContext _simulationContext;
     private static IMapLoader _mapLoader = new MapLoader.MapLoader();
     private static ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
@@ -35,12 +34,15 @@ class Program
     private static ILogger _logger = new FileLogger();
     private static ISimulationRepository _simulationRepository = new SimulationRepository.SimulationRepository(_databaseFile);
     private static IExploringRoutine _exploringRoutine = new ExploringRoutine();
+
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
             _lackOfResourcesAnalyzer, _logger, _exploringRoutine,_simulationRepository);
     private static IExplorationSimulator _explorationSimulator =
         new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps);
+
     private static IReturnSimulator _returnSimulator = new ReturnSimulator(_logger);
+
     public static void Main(string[] args)
     {
         File.Delete($@"{WorkDir}/Resources/message.txt");
@@ -58,20 +60,6 @@ class Program
                     map.Representation[visited.X, visited.Y] = "0";
                 }
             }
-<<<<<<< HEAD
-            foreach (var visited in simCont.VisitedForReturn)
-            {
-                map.Representation[visited.X, visited.Y] = "O";
-            }
-            Console.WriteLine(map);
-        }
-        catch (Exception e)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(e.Message);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-=======
 
             Console.WriteLine(map);
         }
@@ -82,6 +70,5 @@ class Program
             Console.ForegroundColor = ConsoleColor.White;
         }
 
->>>>>>> db0c61ef0ef669618421e49f8d7335267b615d87
     }
 }
