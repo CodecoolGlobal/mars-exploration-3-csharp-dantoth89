@@ -16,7 +16,7 @@ public record Map(string?[,] Representation, bool SuccessfullyGenerated = false)
             string s = "";
             for (int j = 0; j < arr.GetLength(1); j++)
             {
-                s += arr[i, j] == null ? " " : arr[i, j];
+                s += arr[j, i] == null ? " " : arr[j, i];
             }
 
             sb.AppendLine(s);

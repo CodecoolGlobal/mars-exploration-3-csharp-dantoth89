@@ -43,7 +43,7 @@ class Program
         var map = _mapLoader.Load(_mapFile);
         foreach (var visited in simCont.VisitedPlaces)
         {
-            map.Representation[visited.Y, visited.X] = "0";
+            map.Representation[visited.X, visited.Y] = "0";
         }
         Console.WriteLine(map);
     }
