@@ -15,7 +15,7 @@ namespace Codecool.MarsExploration.MapExplorer;
 class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
-    private static string _mapFile = $@"{WorkDir}\Resources\exploration-0.map";
+    private static string _mapFile = $@"{WorkDir}/Resources/exploration-0.map";
     private static Coordinate _landingSpot = new Coordinate(1, 1);
     private static ConfigurationModel _configuration =
         new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
