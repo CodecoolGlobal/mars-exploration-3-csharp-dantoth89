@@ -56,6 +56,8 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
             discoveredCoordinates.AddRange(_coordinateCalculator.GetAdjacentCoordinates(
                 simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, i));
         }
+        simulationContext.Rover.DiscoveredCoordinates.UnionWith(discoveredCoordinates);
+        simulationContext.Rover.DiscoveredCoordinates.Add(simulationContext.Rover.CurrentPosition);
         foreach (var coordinate in discoveredCoordinates)
         {
             if (simulationContext.SymbolsOfPreferredResources.Contains(

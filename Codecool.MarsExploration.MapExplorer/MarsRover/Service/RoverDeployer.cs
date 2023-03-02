@@ -24,7 +24,8 @@ public class RoverDeployer:IRoverDeployer
         var landingCoordinate = possibleLandingCoordinates.First(coord => map.Representation[coord.X, coord.Y] == null);
         var numberOfRover = numberOfRoversDeployed+1;
         var foundResources = new HashSet<(string, Coordinate)>();
-        return new MarsRoverModel($"rover-{numberOfRover}", landingCoordinate, 4, foundResources);
+        return new MarsRoverModel($"rover-{numberOfRover}", landingCoordinate, 2, foundResources,
+            new HashSet<Coordinate>());
     }
 
 }
