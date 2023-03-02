@@ -7,9 +7,9 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.Service;
 
 public class ConfigurationValidator:IConfigurationValidator
 {
-    private readonly CoordinateCalculator _coordinateCalculator;
+    private readonly ICoordinateCalculator _coordinateCalculator;
     
-    public ConfigurationValidator(CoordinateCalculator coordinateCalculator)
+    public ConfigurationValidator(ICoordinateCalculator coordinateCalculator)
     {
         
         _coordinateCalculator = coordinateCalculator;

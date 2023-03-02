@@ -72,11 +72,11 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     private void Analysis(IAnalyzer successAnalyzer, IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer,
         SimulationContext simulationContext)
     {
-        if (successAnalyzer.Analyse(simulationContext))
+        if (successAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Colonizable;
-        if (timeoutAnalyzer.Analyse(simulationContext))
+        if (timeoutAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Timeout;
-        if (lackOfResourcesAnalyzer.Analyse(simulationContext))
+        if (lackOfResourcesAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Error;
     }
 

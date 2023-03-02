@@ -23,12 +23,12 @@ class Program
     private static IMapLoader _mapLoader = new MapLoader.MapLoader();
     private static ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
     private static IRoverDeployer _roverDeployer = new RoverDeployer(_configuration, _coordinateCalculator);
-    private static IConfigurationValidator _configurationValidator = new ConfigurationValidator();
+    private static IConfigurationValidator _configurationValidator = new ConfigurationValidator(_coordinateCalculator);
     private static IAnalyzer _successAnalyzer = new SuccessAnalyzer();
     private static IAnalyzer _timeoutAnalyzer = new TimeoutAnalyzer();
-    private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResourcesAnalyzer();
+    private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResources();
     private static ILogger _logger = new FileLogger();
-    private static IExploringRoutine _exploringRoutine = new ExporingRoutine();
+    private static IExploringRoutine _exploringRoutine = new ExploringRoutine();
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
             _lackOfResourcesAnalyzer, _logger, _exploringRoutine);
