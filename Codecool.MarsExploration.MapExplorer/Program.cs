@@ -18,6 +18,10 @@ namespace Codecool.MarsExploration.MapExplorer;
 class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
+
+
+
+
     private static string _mapFile = $@"{WorkDir}/Resources/exploration-1.map";
     private static string _databaseFile = $@"{WorkDir.Replace("/bin/Debug/net6.0/", "")}/DataBase/SimulationDataBase.db";
     private static Coordinate _landingSpot = new Coordinate(1, 1);
@@ -46,7 +50,7 @@ class Program
 
     public static void Main(string[] args)
     {
-        // File.Delete($@"{WorkDir}\Resources\message.txt");
+        File.Delete($@"{WorkDir}\Resources\message.txt");
         var map = _mapLoader.Load(_mapFile);
         var simCont =
             _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1, _simulationContext);
@@ -58,7 +62,6 @@ class Program
                 map.Representation[visited.X, visited.Y] = "0";
             }
         }
-
         Console.WriteLine(map);
     }
 }
