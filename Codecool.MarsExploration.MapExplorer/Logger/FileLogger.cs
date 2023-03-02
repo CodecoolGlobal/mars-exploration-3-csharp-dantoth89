@@ -6,8 +6,6 @@ public class FileLogger : ILogger
 
     public void Log(string message)
     {
-        var date = DateTime.Now;
-        var timeForFile = date.ToString().Replace(". ", "-").Replace(":", "-").Replace("/", "-");
-        File.AppendAllText(@$"{WorkDir}Resources/message_{timeForFile}.txt", message + Environment.NewLine);
+        File.AppendAllText(@$"{WorkDir}Resources/message.txt", message + Environment.NewLine);
     }
 }

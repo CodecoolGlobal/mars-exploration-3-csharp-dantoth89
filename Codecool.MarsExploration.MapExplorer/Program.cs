@@ -16,7 +16,7 @@ class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
     private static string _mapFile = $@"{WorkDir}/Resources/exploration-0.map";
-    private static Coordinate _landingSpot = new Coordinate(16, 3);
+    private static Coordinate _landingSpot = new Coordinate(1, 2);
 
     private static ConfigurationModel _configuration =
         new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
@@ -43,7 +43,7 @@ class Program
 
     public static void Main(string[] args)
     {
-        // File.Delete($@"{WorkDir}\Resources\message.txt");
+        File.Delete($@"{WorkDir}\Resources\message.txt");
         var map = _mapLoader.Load(_mapFile);
         var simCont =
             _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1, _simulationContext);
@@ -55,7 +55,6 @@ class Program
                 map.Representation[visited.X, visited.Y] = "0";
             }
         }
-
         Console.WriteLine(map);
     }
 }
