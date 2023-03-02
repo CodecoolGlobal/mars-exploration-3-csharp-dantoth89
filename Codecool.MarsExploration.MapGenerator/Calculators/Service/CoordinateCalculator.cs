@@ -23,7 +23,10 @@ public class CoordinateCalculator : ICoordinateCalculator
             coordinate with { Y = coordinate.Y - reach },
             coordinate with { X = coordinate.X + reach },
             coordinate with { X = coordinate.X - reach },
-
+            coordinate with { X = coordinate.X + reach, Y = coordinate.Y + reach },
+            coordinate with { X = coordinate.X + reach, Y = coordinate.Y - reach },
+            coordinate with { X = coordinate.X - reach, Y = coordinate.Y + reach },
+            coordinate with { X = coordinate.X - reach, Y = coordinate.Y - reach },
         };
 
         return adjacent.Where(c => c.X >= 0 && c.Y >= 0 && c.X < dimension && c.Y < dimension);

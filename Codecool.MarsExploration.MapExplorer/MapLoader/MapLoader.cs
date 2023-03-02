@@ -13,7 +13,7 @@ public class MapLoader : IMapLoader
             var line = lines[i].ToCharArray();
             for (int j = 0; j < line.Length; j++)
             {
-                mapArray[i, j] = line[j].ToString();
+                mapArray[i, j] = line[j].ToString() == " " ? null : line[j].ToString();
             }
         }
         return new Map(mapArray, true);
