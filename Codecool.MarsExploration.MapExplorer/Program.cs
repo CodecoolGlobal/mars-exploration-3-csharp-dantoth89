@@ -1,15 +1,45 @@
-﻿using Codecool.MarsExploration.MapGenerator.Calculators.Model;
+﻿using Codecool.MarsExploration.MapExplorer.Configuration.Model;
+using Codecool.MarsExploration.MapExplorer.Configuration.Service;
+using Codecool.MarsExploration.MapExplorer.Logger;
+using Codecool.MarsExploration.MapExplorer.MapLoader;
+using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
+using Codecool.MarsExploration.MapExplorer.Simulation.Model;
+using Codecool.MarsExploration.MapExplorer.Simulation.Service.Analyzer;
+using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
+using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Returning;
+using Codecool.MarsExploration.MapGenerator.Calculators.Model;
+using Codecool.MarsExploration.MapGenerator.Calculators.Service;
 
 namespace Codecool.MarsExploration.MapExplorer;
 
 class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
-
+    private static string _mapFile = $@"{WorkDir}\Resources\exploration-0.map";
+    private static Coordinate _landingSpot = new Coordinate(1, 1);
+    private static ConfigurationModel _configuration =
+        new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
+    private static SimulationContext _simulationContext;
+    private static IMapLoader _mapLoader = new MapLoader.MapLoader();
+    private static ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
+    private static IRoverDeployer _roverDeployer = new RoverDeployer(_configuration, _coordinateCalculator);
+    private static IConfigurationValidator _configurationValidator = new ConfigurationValidator();
+    private static IAnalyzer _successAnalyzer = new SuccessAnalyzer();
+    private static IAnalyzer _timeoutAnalyzer = new TimeoutAnalyzer();
+    private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResourcesAnalyzer();
+    private static ILogger _logger = new FileLogger();
+    private static IExploringRoutine _exploringRoutine = new ExporingRoutine();
+    private static IExplorationSimulationSteps _explorationSimulationSteps =
+        new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
+            _lackOfResourcesAnalyzer, _logger, _exploringRoutine);
+    private static IExplorationSimulator _explorationSimulator =
+        new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps);
+    private static IReturnSimulator _returnSimulator = new ReturnSimulator(_logger);
     public static void Main(string[] args)
     {
-        string mapFile = $@"{WorkDir}\Resources\exploration-0.map";
-        Coordinate landingSpot = new Coordinate(6, 6);
-
+        File.Delete($@"{WorkDir}\Resources\message.txt");
+       var simCont= _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1,_simulationContext);
+        _returnSimulator.ReturningSimulator(simCont);
+        Console.WriteLine(_mapLoader.Load(_mapFile));
     }
 }
