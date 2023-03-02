@@ -67,7 +67,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
                     simulationContext.Map.Representation[coordinate.X, coordinate.Y]))
             {
                 simulationContext.Rover.FoundResources.Add((
-                    simulationContext.Map.Representation[coordinate.X, coordinate.Y], coordinate));
+                    simulationContext.Map.Representation[coordinate.X, coordinate.Y]!, coordinate));
             }
         }
     }
@@ -77,9 +77,9 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     {
         if (successAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Colonizable;
-        if (timeoutAnalyzer.Analyze(simulationContext))
+        else if (timeoutAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Timeout;
-        if (lackOfResourcesAnalyzer.Analyze(simulationContext))
+        else if (lackOfResourcesAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Error;
     }
 
