@@ -1,5 +1,6 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Configuration.Service;
+using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
@@ -7,17 +8,19 @@ using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Service.Analyzer;
 using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
 using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Returning;
+using Codecool.MarsExploration.MapExplorer.SimulationRepository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
+
 
 namespace Codecool.MarsExploration.MapExplorer;
 
 class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
-    private static string _mapFile = $@"{WorkDir}/Resources/exploration-0.map";
-    private static Coordinate _landingSpot = new Coordinate(16, 3);
-
+    private static string _mapFile = $@"{WorkDir}/Resources/exploration-1.map";
+    private static string _databaseFile = $@"{WorkDir.Replace("/bin/Debug/net6.0/", "")}/DataBase/SimulationDataBase.db";
+    private static Coordinate _landingSpot = new Coordinate(1, 1);
     private static ConfigurationModel _configuration =
         new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
 
@@ -30,12 +33,12 @@ class Program
     private static IAnalyzer _timeoutAnalyzer = new TimeoutAnalyzer();
     private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResources();
     private static ILogger _logger = new FileLogger();
+    private static ISimulationRepository _simulationRepository = new SimulationRepository.SimulationRepository(_databaseFile);
     private static IExploringRoutine _exploringRoutine = new ExploringRoutine();
 
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
-            _lackOfResourcesAnalyzer, _logger, _exploringRoutine);
-
+            _lackOfResourcesAnalyzer, _logger, _exploringRoutine,_simulationRepository);
     private static IExplorationSimulator _explorationSimulator =
         new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps);
 
