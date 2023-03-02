@@ -6,6 +6,6 @@ public class TimeoutAnalyzer:IAnalyzer
 {
     public bool Analyze(SimulationContext simulationContext)
     {
-        return simulationContext.StepNumber >= simulationContext.StepsToTimeOut;
+        return simulationContext.StepsToTimeOut == 0;
     }
 }
