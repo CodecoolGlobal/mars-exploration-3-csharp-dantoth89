@@ -10,6 +10,10 @@ using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Returning;
 using Codecool.MarsExploration.MapExplorer.SimulationRepository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
+<<<<<<< HEAD
+=======
+
+>>>>>>> db0c61ef0ef669618421e49f8d7335267b615d87
 namespace Codecool.MarsExploration.MapExplorer;
 
 class Program
@@ -54,6 +58,7 @@ class Program
                     map.Representation[visited.X, visited.Y] = "0";
                 }
             }
+<<<<<<< HEAD
             foreach (var visited in simCont.VisitedForReturn)
             {
                 map.Representation[visited.X, visited.Y] = "O";
@@ -66,5 +71,17 @@ class Program
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
         }
+=======
+
+            Console.WriteLine(map);
+        }
+        catch (Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+>>>>>>> db0c61ef0ef669618421e49f8d7335267b615d87
     }
 }
