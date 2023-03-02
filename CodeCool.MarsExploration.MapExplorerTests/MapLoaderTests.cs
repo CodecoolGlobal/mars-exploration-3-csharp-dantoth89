@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using NUnit.Framework;
 
@@ -20,13 +19,11 @@ public class MapLoaderTests
 
     [Test]
     [TestCaseSource(nameof(MapCases))]
-
     public void TestMapIsContainsAllSymbols(string filepath)
     {
         var map = _mapLoader.Load(filepath);
-        Console.WriteLine(filepath);
-        
-        SortedSet<string> expected = new SortedSet<string>{"#",null,"&","%","*"};
+
+        SortedSet<string> expected = new SortedSet<string>{"#","&","%","*",null};
         SortedSet<string> actual = new SortedSet<string>();
         
         for (int i = 0; i < map.Representation.GetLength(0); i++)
@@ -36,13 +33,32 @@ public class MapLoaderTests
                 actual.Add(map.Representation[i, j]!);
             }
         }
-        
         Assert.That(expected, Is.EqualTo(actual));
-
     }
 
     
+    [Test]
+    [TestCaseSource(nameof(MapCases))]
+    public void TestMapIsNotEmpty(string filepath)
+    {
+        var map = _mapLoader.Load(filepath);
+        int length = map.Representation.GetLength(0);
+        
+        Assert.That(length, Is.GreaterThan(0));
+    }
     
     
-    
+    [Test]
+    [TestCaseSource(nameof(MapCases))]
+    public void TestMapIsNotThrowsAnyException(string filepath)
+    {
+        try
+        {
+            _mapLoader.Load(filepath);
+        }
+        catch (Exception ex)
+        {
+            Assert.Fail("Expected no exception, but got: " + ex.Message);
+        }
+    }
 }

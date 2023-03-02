@@ -11,7 +11,6 @@ public class ConfigurationValidator:IConfigurationValidator
     
     public ConfigurationValidator(ICoordinateCalculator coordinateCalculator)
     {
-        
         _coordinateCalculator = coordinateCalculator;
     }
     

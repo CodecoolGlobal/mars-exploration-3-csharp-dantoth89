@@ -37,7 +37,7 @@ public class SimulationRepository : ISimulationRepository
     }
 
 
-    public void Add(int numberOfSteps, int amountOfResources, ExplorationOutcome outcome)
+    public void Add(int numberOfSteps, int amountOfResources, ExplorationOutcome? outcome)
     {
         var currentTime = DateTime.Now.ToString();
         var query = $"INSERT INTO simulations (time_of_the_simulation, number_of_steps, amount_of_resources_found, outcome) VALUES ('{currentTime}','{numberOfSteps}','{amountOfResources}','{outcome.ToString()}')";

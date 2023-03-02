@@ -3,6 +3,7 @@ using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Service.Analyzer;
+using Codecool.MarsExploration.MapExplorer.SimulationRepository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
 using Codecool.MarsExploration.MapGenerator.MapElements.Model;
@@ -17,9 +18,10 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     private IAnalyzer _lackOfResourcesAnalyzer;
     private ILogger _logger;
     private IExploringRoutine _exploringRoutine;
+    private ISimulationRepository _simulationRepository;
 
     public ExplorationSimulatorSteps(ICoordinateCalculator coordinateCalculator, IAnalyzer successAnalyzer,
-        IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger, IExploringRoutine exploringRoutine)
+        IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger, IExploringRoutine exploringRoutine,ISimulationRepository simulationRepository)
     {
         _coordinateCalculator = coordinateCalculator;
         _successAnalyzer = successAnalyzer;
@@ -27,6 +29,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         _lackOfResourcesAnalyzer = lackOfResourcesAnalyzer;
         _logger = logger;
         _exploringRoutine = exploringRoutine;
+        _simulationRepository = simulationRepository;
     }
 
     public void Steps(SimulationContext simulationContext)
@@ -82,6 +85,9 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
     private void Log(SimulationContext simulationContext)
     {
+        if(simulationContext.Outcome != null)
+            _simulationRepository.Add(simulationContext.StepNumber,simulationContext.Rover.FoundResources.Count,simulationContext.Outcome);
+        
         string message =
             simulationContext.Outcome != null
                 ? $"STEP {simulationContext.StepNumber}; EVENT outcome; OUTCOME {simulationContext.Outcome}"
