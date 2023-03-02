@@ -25,7 +25,7 @@ public class ExplorationSimulator : IExplorationSimulator
         _explorationSimulationSteps = explorationSimulationSteps;
         
     }
-    public SimulationContext ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun, SimulationContext simulationContext)
+    public SimulationContext? ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun, SimulationContext simulationContext)
     {
         if (_configurationValidator.Validate(configuration,map))
         {
@@ -41,8 +41,14 @@ public class ExplorationSimulator : IExplorationSimulator
                     _explorationSimulationSteps.Steps(simulationContext);
                 }
             }
-        }
-
         return simulationContext;
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Error! Wrong configurations");
+            Console.ForegroundColor = ConsoleColor.White;
+            return null;
+        }
     }
 }
