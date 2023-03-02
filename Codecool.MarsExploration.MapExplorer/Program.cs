@@ -1,6 +1,5 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Configuration.Service;
-using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
@@ -11,24 +10,16 @@ using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Returning;
 using Codecool.MarsExploration.MapExplorer.SimulationRepository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
-using Codecool.MarsExploration.MapGenerator.MapElements.Model;
-
-
 namespace Codecool.MarsExploration.MapExplorer;
 
 class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
-
-
-
-
     private static string _mapFile = $@"{WorkDir}/Resources/exploration-0.map";
     private static string _databaseFile = $@"{WorkDir.Replace("/bin/Debug/net6.0/", "")}/DataBase/SimulationDataBase.db";
     private static Coordinate _landingSpot = new Coordinate(15, 15);
     private static ConfigurationModel _configuration =
         new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
-
     private static SimulationContext _simulationContext;
     private static IMapLoader _mapLoader = new MapLoader.MapLoader();
     private static ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
@@ -40,33 +31,40 @@ class Program
     private static ILogger _logger = new FileLogger();
     private static ISimulationRepository _simulationRepository = new SimulationRepository.SimulationRepository(_databaseFile);
     private static IExploringRoutine _exploringRoutine = new ExploringRoutine();
-
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
             _lackOfResourcesAnalyzer, _logger, _exploringRoutine,_simulationRepository);
     private static IExplorationSimulator _explorationSimulator =
         new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps);
-
     private static IReturnSimulator _returnSimulator = new ReturnSimulator(_logger);
-
     public static void Main(string[] args)
     {
-        File.Delete($@"{WorkDir}\Resources\message.txt");
-        var map =_mapLoader.Load(_mapFile);
-        var simCont =
-            _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1, _simulationContext);
-        if (simCont != null)
+        File.Delete($@"{WorkDir}/Resources/message.txt");
+        var map = _mapLoader.Load(_mapFile);
+        try
         {
-            _returnSimulator.ReturningSimulator(simCont);
-            foreach (var visited in simCont.VisitedPlaces)
+            var simCont =
+                _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1,
+                    _simulationContext);
+            if (simCont != null)
             {
-                map.Representation[visited.X, visited.Y] = "0";
+                _returnSimulator.ReturningSimulator(simCont);
+                foreach (var visited in simCont.VisitedPlaces)
+                {
+                    map.Representation[visited.X, visited.Y] = "0";
+                }
             }
             foreach (var visited in simCont.VisitedForReturn)
             {
                 map.Representation[visited.X, visited.Y] = "O";
             }
+            Console.WriteLine(map);
         }
-        Console.WriteLine(map);
+        catch (Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
     }
 }
