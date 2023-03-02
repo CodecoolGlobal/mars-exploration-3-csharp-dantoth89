@@ -6,6 +6,4 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.Service;
 public interface IConfigurationValidator
 {
    bool Validate(ConfigurationModel configuration, Map map);
-
-   //TESTS
 }
