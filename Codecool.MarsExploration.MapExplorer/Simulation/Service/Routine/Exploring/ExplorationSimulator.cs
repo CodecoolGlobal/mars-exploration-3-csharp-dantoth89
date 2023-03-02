@@ -27,7 +27,7 @@ public class ExplorationSimulator : IExplorationSimulator
     }
     public SimulationContext ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun, SimulationContext simulationContext)
     {
-        if (_configurationValidator.Validate(configuration,simulationContext.Map))
+        if (_configurationValidator.Validate(configuration,map))
         {
             int count = 0;
             while (count < numberToRun)
