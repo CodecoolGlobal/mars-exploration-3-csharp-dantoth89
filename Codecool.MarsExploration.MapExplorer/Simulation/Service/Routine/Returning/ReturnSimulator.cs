@@ -23,6 +23,7 @@ public class ReturnSimulator : IReturnSimulator
     }
     public void ReturningSimulator(SimulationContext simulationContext)
     {
+        
         Coordinate nextPlace = new Coordinate(-1,-1);
        while (!_coordinateCalculator.GetAdjacentCoordinates(simulationContext.LocationOfSpaceship, simulationContext.Map.Dimension,1).Contains(nextPlace))
        {
@@ -30,7 +31,7 @@ public class ReturnSimulator : IReturnSimulator
             var possibleCoordinates = adjacentCoordinates.Where(coord => simulationContext.Map.Representation[coord.X, coord.Y] == null);
                nextPlace =_returningRoutine.ReturnMovement(simulationContext, possibleCoordinates);
             simulationContext.Rover.CurrentPosition = nextPlace;
-            simulationContext.VisitedPlaces.Add(nextPlace);
+            simulationContext.VisitedForReturn.Add(nextPlace);
         }
         WhatDidTheRoverFind(simulationContext);
     }

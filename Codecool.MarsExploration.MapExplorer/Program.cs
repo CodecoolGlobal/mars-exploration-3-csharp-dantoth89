@@ -11,6 +11,7 @@ using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Returning;
 using Codecool.MarsExploration.MapExplorer.SimulationRepository;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
+using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 
 namespace Codecool.MarsExploration.MapExplorer;
@@ -22,9 +23,9 @@ class Program
 
 
 
-    private static string _mapFile = $@"{WorkDir}/Resources/exploration-1.map";
+    private static string _mapFile = $@"{WorkDir}/Resources/exploration-0.map";
     private static string _databaseFile = $@"{WorkDir.Replace("/bin/Debug/net6.0/", "")}/DataBase/SimulationDataBase.db";
-    private static Coordinate _landingSpot = new Coordinate(1, 1);
+    private static Coordinate _landingSpot = new Coordinate(15, 15);
     private static ConfigurationModel _configuration =
         new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
 
@@ -51,7 +52,7 @@ class Program
     public static void Main(string[] args)
     {
         File.Delete($@"{WorkDir}\Resources\message.txt");
-        var map = _mapLoader.Load(_mapFile);
+        var map =_mapLoader.Load(_mapFile);
         var simCont =
             _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1, _simulationContext);
         if (simCont != null)
@@ -60,6 +61,10 @@ class Program
             foreach (var visited in simCont.VisitedPlaces)
             {
                 map.Representation[visited.X, visited.Y] = "0";
+            }
+            foreach (var visited in simCont.VisitedForReturn)
+            {
+                map.Representation[visited.X, visited.Y] = "O";
             }
         }
         Console.WriteLine(map);

@@ -14,9 +14,9 @@ public class ReturningRoutine : BaseRoutine, IReturningRoutine
     {
         foreach (var place in possiblePlaces)
         {
-            if (!simulationContext.VisitedPlaces.Contains(place))
+            if (!simulationContext.VisitedForReturn.Contains(place))
             {
-                return CalculateBestPossiblePlace(target, possiblePlaces.Except(simulationContext.VisitedPlaces));
+                return CalculateBestPossiblePlace(target, possiblePlaces.Except(simulationContext.VisitedForReturn));
             }
         }
         
@@ -25,6 +25,6 @@ public class ReturningRoutine : BaseRoutine, IReturningRoutine
         
     public Coordinate ReturnMovement(SimulationContext simulationContext, IEnumerable<Coordinate> possiblePlaces)
     {
-        return ReachTargetPlace(simulationContext, simulationContext.LocationOfSpaceship, possiblePlaces);
+        return ReachTargetPlace(simulationContext, simulationContext.LocationOfSpaceship, possiblePlaces)!;
     }
 }

@@ -7,9 +7,10 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Model;
 
 public record SimulationContext(int StepNumber, int StepsToTimeOut, MarsRoverModel Rover,
     Coordinate LocationOfSpaceship, Map Map, IEnumerable<string> SymbolsOfPreferredResources,
-    ExplorationOutcome? Outcome, List<Coordinate> VisitedPlaces)
+    ExplorationOutcome? Outcome, HashSet<Coordinate> VisitedPlaces, HashSet<Coordinate> VisitedForReturn)
 {
-    public List<Coordinate> VisitedPlaces { get; set; } = VisitedPlaces;
+    public HashSet<Coordinate> VisitedPlaces { get; set; } = VisitedPlaces;
+    public HashSet<Coordinate> VisitedForReturn { get; set; } = VisitedForReturn;
     public int StepNumber { get; set; } = StepNumber;
     public int StepsToTimeOut { get; set; } = StepsToTimeOut;
     public ExplorationOutcome? Outcome { get; set; } = Outcome;
