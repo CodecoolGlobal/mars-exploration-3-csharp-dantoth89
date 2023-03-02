@@ -16,6 +16,9 @@ public class MapLoader : IMapLoader
                 mapArray[i, j] = line[j].ToString() == " " ? null : line[j].ToString();
             }
         }
-        return new Map(mapArray, true);
+
+        var map = new Map(mapArray, true);
+        return map.Representation.GetLength(0) > 5 ? map :
+            throw new ArgumentException("Error while loading map!");
     }
 }
