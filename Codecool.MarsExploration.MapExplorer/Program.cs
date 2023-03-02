@@ -59,6 +59,10 @@ class Program
                 {
                     map.Representation[visited.X, visited.Y] = "0";
                 }
+                foreach (var visited in simCont.VisitedForReturn)
+                {
+                    map.Representation[visited.X, visited.Y] = "O";
+                }
             }
 
             Console.WriteLine(map);
