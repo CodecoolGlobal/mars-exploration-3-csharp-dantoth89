@@ -37,7 +37,7 @@ class Program
     private static IReturnSimulator _returnSimulator = new ReturnSimulator(_logger);
     public static void Main(string[] args)
     {
-        File.Delete($@"{WorkDir}\Resources\message.txt");
+        // File.Delete($@"{WorkDir}\Resources\message.txt");
        var simCont= _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1,_simulationContext);
         _returnSimulator.ReturningSimulator(simCont);
         Console.WriteLine(_mapLoader.Load(_mapFile));
