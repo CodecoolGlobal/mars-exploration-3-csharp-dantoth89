@@ -12,7 +12,7 @@ public class SuccessAnalyzer:IAnalyzer
         foreach (var (foundResourceSymbol, foundResourceCoordinate) in simulationContext.Rover.FoundResources)
         {
             if (foundResourceSymbol == "%") minerals++;
-            if (foundResourceSymbol == "*") water++;
+            else if (foundResourceSymbol == "*") water++;
         }
 
         return minerals >= 4 && water >= 3;
