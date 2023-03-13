@@ -17,11 +17,15 @@ namespace Codecool.MarsExploration.MapExplorer;
 class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
-    private static string _mapFile = $@"{WorkDir}/Resources/exploration-0.map";
-    private static string _databaseFile = $@"{WorkDir.Replace("/bin/Debug/net6.0/", "")}/DataBase/SimulationDataBase.db";
-    private static Coordinate _landingSpot = new Coordinate(15, 15);
+    private static string _mapFile = $@"{WorkDir}/Resources/exploration-1.map";
+
+    private static string _databaseFile =
+        $@"{WorkDir.Replace("/bin/Debug/net6.0/", "")}/Resources/SimulationDataBase.db";
+
+    private static Coordinate _landingSpot = new Coordinate(1, 1);
+
     private static ConfigurationModel _configuration =
-        new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 100);
+        new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 150);
 
     private static SimulationContext _simulationContext;
     private static IMapLoader _mapLoader = new MapLoader.MapLoader();
@@ -32,12 +36,16 @@ class Program
     private static IAnalyzer _timeoutAnalyzer = new TimeoutAnalyzer();
     private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResources();
     private static ILogger _logger = new FileLogger();
-    private static ISimulationRepository _simulationRepository = new SimulationRepository.SimulationRepository(_databaseFile);
+
+    private static ISimulationRepository _simulationRepository =
+        new SimulationRepository.SimulationRepository(_databaseFile);
+
     private static IExploringRoutine _exploringRoutine = new ExploringRoutine();
 
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
-            _lackOfResourcesAnalyzer, _logger, _exploringRoutine,_simulationRepository);
+            _lackOfResourcesAnalyzer, _logger, _exploringRoutine, _simulationRepository);
+
     private static IExplorationSimulator _explorationSimulator =
         new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps);
 
@@ -45,6 +53,7 @@ class Program
 
     public static void Main(string[] args)
     {
+        Console.WriteLine(_databaseFile);
         File.Delete($@"{WorkDir}/Resources/message.txt");
         var map = _mapLoader.Load(_mapFile);
         try
@@ -59,6 +68,7 @@ class Program
                 {
                     map.Representation[visited.X, visited.Y] = "0";
                 }
+
                 foreach (var visited in simCont.VisitedForReturn)
                 {
                     map.Representation[visited.X, visited.Y] = "O";
@@ -73,6 +83,5 @@ class Program
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
         }
-
     }
 }
