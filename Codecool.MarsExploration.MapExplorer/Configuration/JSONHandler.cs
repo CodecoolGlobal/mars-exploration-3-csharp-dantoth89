@@ -12,7 +12,10 @@ public class JSONHandler
     {
         string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
         var separator = Path.DirectorySeparatorChar;
-        using (StreamReader r = new StreamReader($@"{WorkDir.Replace($@"{separator}bin{separator}Debug{separator}net6.0{separator}", "")}{separator}Configuration{separator}Config.json" ))
+        using (StreamReader r =
+               new StreamReader(
+                   $@"{WorkDir.Replace($@"{separator}bin{separator}Debug{separator}net6.0{separator}",
+                       "")}{separator}Configuration{separator}Config.json"))
         {
             string json = r.ReadToEnd();
             source = JsonSerializer.Deserialize<JSONConfig>(json);
