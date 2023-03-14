@@ -43,8 +43,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
     private void Movement(SimulationContext simulationContext)
     {
-        var adjacentCoordinates = _coordinateCalculator.GetAdjacentCoordinates(simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, 1);
-        var possibleCoordinates = adjacentCoordinates.Where(coord => simulationContext.Map.Representation[coord.X, coord.Y] == null);
+        var possibleCoordinates = _coordinateCalculator.GetEmptyAdjacentCoordinates(simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, simulationContext.Map,1 );
         var nextPlace=_exploringRoutine.ExploreMovement(simulationContext, possibleCoordinates);
         simulationContext.Rover.CurrentPosition = nextPlace;
         simulationContext.VisitedPlaces.Add(nextPlace);
@@ -85,9 +84,9 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
     private void Log(SimulationContext simulationContext)
     {
-        if(simulationContext.Outcome != null)
-            _simulationRepository.Add(simulationContext.StepNumber,simulationContext.Rover.FoundResources.Count,simulationContext.Outcome);
-        
+        // if(simulationContext.Outcome != null)
+        //     _simulationRepository.Add(simulationContext.StepNumber,simulationContext.Rover.FoundResources.Count,simulationContext.Outcome);
+        //
         string message =
             simulationContext.Outcome != null
                 ? $"STEP {simulationContext.StepNumber}; EVENT outcome; OUTCOME {simulationContext.Outcome}"

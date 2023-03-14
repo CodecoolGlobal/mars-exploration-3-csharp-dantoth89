@@ -13,26 +13,29 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Return
 
 public class ReturnSimulator : IReturnSimulator
 {
-    
     private ILogger _logger;
     private IReturningRoutine _returningRoutine = new ReturningRoutine();
     private ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
+
     public ReturnSimulator(ILogger logger)
     {
         _logger = logger;
     }
+
     public void ReturningSimulator(SimulationContext simulationContext)
     {
-        
-        Coordinate nextPlace = new Coordinate(-1,-1);
-       while (!_coordinateCalculator.GetAdjacentCoordinates(simulationContext.LocationOfSpaceship, simulationContext.Map.Dimension,1).Contains(nextPlace))
-       {
-            var adjacentCoordinates = _coordinateCalculator.GetAdjacentCoordinates(simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, 1);
-            var possibleCoordinates = adjacentCoordinates.Where(coord => simulationContext.Map.Representation[coord.X, coord.Y] == null);
-               nextPlace =_returningRoutine.ReturnMovement(simulationContext, possibleCoordinates);
+        Coordinate nextPlace = new Coordinate(-1, -1);
+        while (!_coordinateCalculator
+                   .GetAdjacentCoordinates(simulationContext.LocationOfSpaceship, simulationContext.Map.Dimension, 1)
+                   .Contains(nextPlace))
+        {
+            var possibleCoordinates = _coordinateCalculator.GetEmptyAdjacentCoordinates(
+                simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, simulationContext.Map, 1);
+            nextPlace = _returningRoutine.ReturnMovement(simulationContext, possibleCoordinates);
             simulationContext.Rover.CurrentPosition = nextPlace;
             simulationContext.VisitedForReturn.Add(nextPlace);
         }
+
         WhatDidTheRoverFind(simulationContext);
     }
 
@@ -48,7 +51,7 @@ public class ReturnSimulator : IReturnSimulator
                 numberOfMinerals++;
         }
 
-        _logger.Log($"The {simulationContext.Rover.Id} is back. Found: {numberOfWaters} water and {numberOfMinerals} minerals");
+        _logger.Log(
+            $"The {simulationContext.Rover.Id} is back. Found: {numberOfWaters} water and {numberOfMinerals} minerals");
     }
 }
-

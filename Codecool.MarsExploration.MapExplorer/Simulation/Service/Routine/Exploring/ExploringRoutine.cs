@@ -1,17 +1,18 @@
 ﻿namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
+
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
 
-public class ExploringRoutine : BaseRoutine , IExploringRoutine
+public class ExploringRoutine : BaseRoutine, IExploringRoutine
 {
- private Coordinate CalculateMapCentral(SimulationContext simulationContext)
+    private Coordinate CalculateMapCentral(SimulationContext simulationContext)
     {
         var sizeOfMap = simulationContext.Map.Dimension;
         var central = (int)sizeOfMap / 2;
         return new Coordinate(central, central);
     }
-    
+
     public Coordinate ExploreMovement(SimulationContext simulationContext, IEnumerable<Coordinate> possiblePlaces)
     {
         Coordinate nextStep = new Coordinate(-1, -1);
@@ -19,17 +20,20 @@ public class ExploringRoutine : BaseRoutine , IExploringRoutine
         {
             _idealStartingPlace = CalculateIdealStartingPlace(simulationContext);
         }
+
         var targetPlaces = GenerateCheckpoints(simulationContext, _idealStartingPlace);
         if (_reachedTarget < 0)
         {
             nextStep = ReachTargetPlace(simulationContext, _idealStartingPlace, possiblePlaces);
         }
         else
+        {
             nextStep = ReachTargetPlace(simulationContext, targetPlaces[_reachedTarget], possiblePlaces);
+        }
 
         return nextStep;
     }
-    
+
     protected override Coordinate GetNextStepVisitedOrNot(SimulationContext simulationContext,
         IEnumerable<Coordinate> possiblePlaces, Coordinate target)
     {
@@ -43,7 +47,7 @@ public class ExploringRoutine : BaseRoutine , IExploringRoutine
 
         return CalculateBestPossiblePlace(target, possiblePlaces);
     }
-    
+
     private Coordinate CalculateIdealStartingPlace(SimulationContext simulationContext)
     {
         var currentPosition = simulationContext.Rover.CurrentPosition;
@@ -100,19 +104,18 @@ public class ExploringRoutine : BaseRoutine , IExploringRoutine
         while (x < simulationContext.Map.Dimension && y < simulationContext.Map.Dimension
                                                    && x > 0 && y > 0)
         {
-
             count = count < 0 ? -1 * (count - 1) : -1 * (count + 1);
-            y += 2*simulationContext.Rover.Sight * count;
-            
+            y += 2 * simulationContext.Rover.Sight * count;
+
             checkPoints.Add(new Coordinate(x, y));
             count = -1 * count;
-            x += 2*simulationContext.Rover.Sight * count;
-            
+            x += 2 * simulationContext.Rover.Sight * count;
+
             checkPoints.Add(new Coordinate(x, y));
             count = -1 * count;
         }
     }
-    
+
     private static Tuple<int, bool> GetInitialisationOfFindingTargetsFromCorners(SimulationContext simulationContext,
         Coordinate startingPlace, int prefix, bool secondDiagonal)
     {
@@ -145,7 +148,7 @@ public class ExploringRoutine : BaseRoutine , IExploringRoutine
 
         return new Tuple<int, bool>(prefix, secondDiagonal);
     }
-    
+
     private void GetTargetsFromCorners(SimulationContext simulationContext, int x, int y, int count, int prefix,
         List<Coordinate> checkPoints, bool secondDiagonal)
     {
@@ -155,23 +158,18 @@ public class ExploringRoutine : BaseRoutine , IExploringRoutine
             if (secondDiagonal)
                 prefix = prefix * -1;
             x += prefix * (simulationContext.Map.Dimension - count * 2 * simulationContext.Rover.Sight);
-            
+
             checkPoints.Add(new Coordinate(x, y));
             if (!secondDiagonal)
                 prefix = prefix * -1;
             y += prefix * (simulationContext.Map.Dimension - count * 2 * simulationContext.Rover.Sight);
-            
+
             checkPoints.Add(new Coordinate(x, y));
         }
     }
-    
+
     private int CalculateTurnings(SimulationContext simulationContext)
     {
         return simulationContext.Map.Dimension / simulationContext.Rover.Sight;
     }
-
-    
-    
-
-
 }
