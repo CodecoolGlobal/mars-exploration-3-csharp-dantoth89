@@ -70,9 +70,11 @@ public class PlacingCommandCenter
     private bool IsThereAnotherCommandCenter(IEnumerable<Coordinate> possiblePlacesForCMDC,
         List<Command_Center> commandCenters)
     {
-        return possiblePlacesForCMDC.Intersect
-        (commandCenters.Select
-            (CMDC => CMDC.Position).ToList()).Any();
+        if (possiblePlacesForCMDC.Any() && commandCenters.Any())
+            return possiblePlacesForCMDC.Intersect
+            (commandCenters.Select
+                (CMDC => CMDC.Position).ToList()).Any();
+        else return false;
     }
 
     private Coordinate? FindPlaceCommandCenter(SimulationContext simulationContext, List<Command_Center> commandCenters)
