@@ -6,6 +6,5 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Explor
 
 public interface IExplorationSimulator
 {
-    SimulationContext ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun,
-        SimulationContext simulationContext);
+    SimulationContext ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun);
 }

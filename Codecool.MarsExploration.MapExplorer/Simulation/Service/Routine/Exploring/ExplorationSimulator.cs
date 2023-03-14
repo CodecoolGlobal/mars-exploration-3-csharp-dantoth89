@@ -25,8 +25,9 @@ public class ExplorationSimulator : IExplorationSimulator
         _explorationSimulationSteps = explorationSimulationSteps;
         
     }
-    public SimulationContext? ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun, SimulationContext simulationContext)
+    public SimulationContext? ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun)
     {
+        SimulationContext simulationContext = null;
         if (!_configurationValidator.Validate(configuration, map))
             throw new Exception("Error! Wrong configurations");
             int count = 0;
@@ -41,7 +42,6 @@ public class ExplorationSimulator : IExplorationSimulator
                     _explorationSimulationSteps.Steps(simulationContext, configuration);
                 }
             }
-        return simulationContext;
-        
+            return simulationContext;
     }
 }
