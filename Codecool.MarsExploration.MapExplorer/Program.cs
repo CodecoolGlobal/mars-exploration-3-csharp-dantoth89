@@ -4,6 +4,7 @@ using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
+using Codecool.MarsExploration.MapExplorer.ParseJSON;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Service.Analyzer;
 using Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
@@ -21,12 +22,10 @@ class Program
 
     private static string _databaseFile =
         $@"{WorkDir.Replace("/bin/Debug/net6.0/", "")}/Resources/SimulationDataBase.db";
-
-    private static Coordinate _landingSpot = new Coordinate(1, 1);
-
-    private static ConfigurationModel _configuration =
-        new ConfigurationModel(_mapFile, _landingSpot, new List<string>() { "*", "%" }, 150);
-
+    
+    private static JSONHandler _jsonHandler = new JSONHandler();
+    private static ConfigurationModel _configuration = _jsonHandler.JSONConverter(WorkDir);
+    
     private static SimulationContext _simulationContext;
     private static IMapLoader _mapLoader = new MapLoader.MapLoader();
     private static ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
@@ -35,7 +34,7 @@ class Program
     private static IAnalyzer _successAnalyzer = new SuccessAnalyzer();
     private static IAnalyzer _timeoutAnalyzer = new TimeoutAnalyzer();
     private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResources();
-    private static ILogger _logger = new FileLogger();
+    private static ILogger _logger = _configuration.LoggerType ? new FileLogger() : new ConsolLogger();
 
     private static ISimulationRepository _simulationRepository =
         new SimulationRepository.SimulationRepository(_databaseFile);
@@ -53,13 +52,14 @@ class Program
 
     public static void Main(string[] args)
     {
-        Console.WriteLine(_databaseFile);
+     
         File.Delete($@"{WorkDir}/Resources/message.txt");
-        var map = _mapLoader.Load(_mapFile);
-        try
-        {
-            var simCont =
-                _explorationSimulator.ExploringSimulator(_mapLoader.Load(_mapFile), _configuration, 1,
+        var map = _mapLoader.Load(_configuration.MapFilePath);
+        Console.WriteLine(map);
+         try
+         {
+        var simCont =
+                _explorationSimulator.ExploringSimulator(_mapLoader.Load(_configuration.MapFilePath), _configuration, 1,
                     _simulationContext);
             if (simCont != null)
             {
@@ -77,11 +77,11 @@ class Program
 
             Console.WriteLine(map);
         }
-        catch (Exception e)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(e.Message);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
+         catch (Exception e)
+         {
+             Console.ForegroundColor = ConsoleColor.Red;
+             Console.WriteLine(e.Message);
+             Console.ForegroundColor = ConsoleColor.White;
+         }
     }
 }

@@ -20,11 +20,11 @@ public class RoverDeployer:IRoverDeployer
 
     public MarsRoverModel DeployMarsRover(int numberOfRoversDeployed, Map map)
     {
-        var possibleLandingCoordinates = _coordinateCalculator.GetAdjacentCoordinates(_configuration.LandingSpot, map.Dimension, 1);
-        var landingCoordinate = possibleLandingCoordinates.First(coord => map.Representation[coord.X, coord.Y] == null);
+        var landingCoordinate = _coordinateCalculator.GetEmptyAdjacentCoordinates(_configuration.LandingSpot, map.Dimension, map, 1)
+            .ToList()[0];
         var numberOfRover = numberOfRoversDeployed+1;
         var foundResources = new HashSet<(string, Coordinate)>();
-        return new MarsRoverModel($"rover-{numberOfRover}", landingCoordinate, 2, foundResources,
+        return new MarsRoverModel($"rover-{numberOfRover}", landingCoordinate, _configuration.RoverSight, foundResources,
             new HashSet<Coordinate>());
     }
 
