@@ -11,6 +11,8 @@ using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
 
+
+
 public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 {
     private ICoordinateCalculator _coordinateCalculator;
@@ -20,8 +22,9 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     private ILogger _logger;
     private IExploringRoutine _exploringRoutine;
     private ISimulationRepository _simulationRepository;
-    private int _numberOfResources = 0;
-    private int _prevNumberOfResources = 0;
+    internal int NumberOfResources = 0;
+    internal int PrevNumberOfResources = 0;
+    private readonly PlacingCommandCenter _placingCommandCenter;
 
     public ExplorationSimulatorSteps(ICoordinateCalculator coordinateCalculator, IAnalyzer successAnalyzer,
         IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger,
@@ -34,6 +37,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         _logger = logger;
         _exploringRoutine = exploringRoutine;
         _simulationRepository = simulationRepository;
+        _placingCommandCenter = new PlacingCommandCenter(this);
     }
 
     public void Steps(SimulationContext simulationContext)
@@ -75,57 +79,12 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
             {
                 simulationContext.Rover.FoundResources.Add((
                     simulationContext.Map.Representation[coordinate.X, coordinate.Y]!, coordinate));
-                _numberOfResources = simulationContext.Rover.FoundResources.Count;
+                NumberOfResources = simulationContext.Rover.FoundResources.Count;
             }
         }
     }
 
-    private bool NewResourceFound()
-    {
-        var isTrue = _numberOfResources > _prevNumberOfResources;
-        _prevNumberOfResources = _numberOfResources;
-        return isTrue;
-    }
-
-    public IEnumerable<Coordinate> ScanForPlaceForCommandCenter(SimulationContext simulationContext)
-    {
-        var rangeOfMineral = new List<Coordinate>();
-        var rangeOfWater = new List<Coordinate>();
-        foreach (var mineral in 
-                 simulationContext.Rover.FoundResources.Where(res=> res.foundResourceSymbol=="%"))
-        {
-            foreach (var water in 
-                     simulationContext.Rover.FoundResources.Where(res=> res.foundResourceSymbol=="*"))
-            {
-                if (Math.Abs(mineral.foundResourceCoordinate.X - water.foundResourceCoordinate.X) <=
-                    simulationContext.CommandCenterSight * 2 &&
-                    Math.Abs(mineral.foundResourceCoordinate.Y - water.foundResourceCoordinate.Y) <=
-                    simulationContext.CommandCenterSight * 2)
-                {
-                    for (int i = 0; i < simulationContext.CommandCenterSight; i++)
-                    {
-                        rangeOfMineral.AddRange(_coordinateCalculator.GetAdjacentCoordinates(
-                            mineral.foundResourceCoordinate, simulationContext.Map.Dimension, i));
-                    }
-                    for (int i = 0; i < simulationContext.CommandCenterSight; i++)
-                    {
-                        rangeOfWater.AddRange(_coordinateCalculator.GetAdjacentCoordinates(
-                            water.foundResourceCoordinate, simulationContext.Map.Dimension, i));
-                    }
-                }
-            }
-        }
-        return rangeOfMineral.Intersect(rangeOfWater);
-    }
-
-    public bool IsThereAnotherCommandCenter(IEnumerable<Coordinate> possiblePlacesForCMDC, List<Command_Center> commandCenters)
-    {
-        return possiblePlacesForCMDC.Intersect
-            (commandCenters.Select
-                (CMDC => CMDC.Position).ToList()).Count() == 0;
-    }
-
-private void Analysis(IAnalyzer successAnalyzer, IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer,
+    private void Analysis(IAnalyzer successAnalyzer, IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer,
         SimulationContext simulationContext)
     {
         if (successAnalyzer.Analyze(simulationContext))
