@@ -34,7 +34,7 @@ public class ExplorationSimulator : IExplorationSimulator
             {
                 var rover = _roverDeployer.DeployMarsRover(count, map);
                 simulationContext = new SimulationContext(0, configuration.TimeoutSteps,
-                    rover, configuration.LandingSpot, map, configuration.NeededResourcesSymbols, null, new HashSet<Coordinate>(), new HashSet<Coordinate>());
+                    rover, configuration.LandingSpot, map, configuration.NeededResourcesSymbols, null, new HashSet<Coordinate>(), new HashSet<Coordinate>(), configuration.CommandCenterSight);
                 count++;
                 while (simulationContext.Outcome==null)
                 {
