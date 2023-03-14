@@ -6,56 +6,56 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine;
 
 public abstract class BaseRoutine
 {
-    
     protected int _reachedTarget = -1;
     protected ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
     protected Coordinate _idealStartingPlace;
 
-    
-     protected Coordinate? ReachTargetPlace(SimulationContext simulationContext, Coordinate idealTargetPlace,
+
+    protected Coordinate? ReachTargetPlace(SimulationContext simulationContext, Coordinate idealTargetPlace,
         IEnumerable<Coordinate> possiblePlaces)
     {
         var x = simulationContext.Rover.CurrentPosition.X;
         var y = simulationContext.Rover.CurrentPosition.Y;
-        
-            if (x > idealTargetPlace.X)
-                x--;
-            if (x < idealTargetPlace.X)
-                x++;
-            if (y > idealTargetPlace.Y)
-                y--;
-            if (y < idealTargetPlace.Y)
-                y++;
-            
-            if (x == idealTargetPlace.X && y == idealTargetPlace.Y)
-            {
-                _reachedTarget++;
-            }
+
+        if (x > idealTargetPlace.X)
+            x--;
+        if (x < idealTargetPlace.X)
+            x++;
+        if (y > idealTargetPlace.Y)
+            y--;
+        if (y < idealTargetPlace.Y)
+            y++;
+
+        if (x == idealTargetPlace.X && y == idealTargetPlace.Y)
+        {
+            _reachedTarget++;
+        }
+
         return Move(simulationContext, possiblePlaces, x, y, idealTargetPlace);
     }
 
-    protected Coordinate Move(SimulationContext simulationContext, IEnumerable<Coordinate> possiblePlaces, int x, int y, Coordinate target)
+    protected Coordinate Move(SimulationContext simulationContext, IEnumerable<Coordinate> possiblePlaces, int x, int y,
+        Coordinate target)
     {
-        if (possiblePlaces.Contains(new Coordinate(x, y)) 
+        if (possiblePlaces.Contains(new Coordinate(x, y))
             &&
             !simulationContext.VisitedPlaces.Contains(new Coordinate(x, y)))
             return new Coordinate(x, y);
         else
-         {              
-        var commonPossiblePlaces =
-            possiblePlaces.Intersect(GetNotOccupiedNeighboursOfNextStep(simulationContext));
-         if (commonPossiblePlaces.Any())
-           return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
-         else
-           return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
-         }
+        {
+            var commonPossiblePlaces =
+                possiblePlaces.Intersect(GetNotOccupiedNeighboursOfNextStep(simulationContext));
+            if (commonPossiblePlaces.Any())
+                return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
+            else
+                return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
+        }
     }
 
     protected IEnumerable<Coordinate> GetNotOccupiedNeighboursOfNextStep(SimulationContext simulationContext)
     {
-        var adjacentCoordinates = _coordinateCalculator.GetAdjacentCoordinates(simulationContext.Rover.CurrentPosition,
-            simulationContext.Map.Dimension, 1);
-        return adjacentCoordinates.Where(coord => simulationContext.Map.Representation[coord.X, coord.Y] == null);
+        return _coordinateCalculator.GetEmptyAdjacentCoordinates(simulationContext.Rover.CurrentPosition,
+            simulationContext.Map.Dimension, simulationContext.Map);
     }
 
     protected abstract Coordinate GetNextStepVisitedOrNot(SimulationContext simulationContext,
@@ -66,11 +66,9 @@ public abstract class BaseRoutine
         var distances = new Dictionary<Coordinate, int>();
         foreach (var coord in possibleplaces)
         {
-            distances.Add(coord, (Math.Abs(TargetPlace.X-coord.X)+Math.Abs(TargetPlace.Y-coord.Y)));
+            distances.Add(coord, (Math.Abs(TargetPlace.X - coord.X) + Math.Abs(TargetPlace.Y - coord.Y)));
         }
+
         return distances.MinBy(pair => pair.Value).Key;
     }
-    
-    
-    
 }
