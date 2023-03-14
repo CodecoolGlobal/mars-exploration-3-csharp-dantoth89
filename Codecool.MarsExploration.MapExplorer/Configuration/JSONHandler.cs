@@ -10,7 +10,9 @@ public class JSONHandler
 
     private void JSONReader()
     {
-        using (StreamReader r = new StreamReader("Config.json"))
+        string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
+        var separator = Path.DirectorySeparatorChar;
+        using (StreamReader r = new StreamReader($@"{WorkDir.Replace($@"{separator}bin{separator}Debug{separator}net6.0{separator}", "")}{separator}Configuration{separator}Config.json" ))
         {
             string json = r.ReadToEnd();
             source = JsonSerializer.Deserialize<JSONConfig>(json);
