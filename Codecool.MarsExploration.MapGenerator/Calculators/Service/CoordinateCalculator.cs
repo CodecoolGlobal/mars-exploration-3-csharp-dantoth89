@@ -32,6 +32,13 @@ public class CoordinateCalculator : ICoordinateCalculator
         return adjacent.Where(c => c.X >= 0 && c.Y >= 0 && c.X < dimension && c.Y < dimension);
     }
 
+    public IEnumerable<Coordinate> GetEmptyAdjacentCoordinates(Coordinate coordinate, int dimension, Map map, int reach = 1)
+    {
+        return GetAdjacentCoordinates(coordinate, dimension, reach)
+            .Where(coordinate => map.Representation[coordinate.X, coordinate.Y] == null);
+    }
+
+
     public IEnumerable<Coordinate> GetAdjacentCoordinates(IEnumerable<Coordinate> coordinates, int dimension)
     {
         return coordinates.SelectMany(c => GetAdjacentCoordinates(c, dimension));
