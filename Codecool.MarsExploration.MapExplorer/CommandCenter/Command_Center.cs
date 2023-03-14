@@ -1,3 +1,4 @@
+using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
@@ -7,22 +8,20 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Servi
 
 public class Command_Center:ICommand_Center
 {
-   private int _id;
-   private Coordinate _position;
-   private int _radius;
-   private bool _isItActive;
-   private List<MarsRoverModel> _rovers;
-   private Dictionary<string, int> _deliveredResources;
+   public int Id { get; }
+   public int Radius { get; }
+   public bool IsItActive { get; set; } = false;
+   public List<MarsRoverModel> Rovers { get; set; }
+   public Dictionary<string, int> DeliveredResources { get; set; } = new Dictionary<string, int>();
    private ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
 public Coordinate Position { get; }
-   public Command_Center(int id, Coordinate position, int radius, bool isItActive, List<MarsRoverModel> rovers, Dictionary<string, int> deliveredResources)
+   public Command_Center(int id, Coordinate position, MarsRoverModel actualRover, ConfigurationModel config)
    {
-      _id = id;
+      Id = id;
       Position = position;
-      _radius = radius;
-      _isItActive = isItActive;
-      _rovers = rovers;
-      _deliveredResources = deliveredResources;
+      Rovers = new List<MarsRoverModel>() {actualRover};
+      Radius = config.CommandCenterSight;
+
    }
  
    
