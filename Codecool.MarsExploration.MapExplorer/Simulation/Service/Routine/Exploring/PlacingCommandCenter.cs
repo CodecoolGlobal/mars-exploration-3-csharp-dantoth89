@@ -92,14 +92,14 @@ public class PlacingCommandCenter
     }
 
     public Command_Center? PlaceCommandCenter(SimulationContext simulationContext, List<Command_Center> commandCenters,
-        MarsRoverModel actualRover, ConfigurationModel config)
+        ConfigurationModel config)
     {
         Command_Center cmdCenter;
         if (FindPlaceCommandCenter(simulationContext, commandCenters) != null)
         {
             cmdCenter = new Command_Center(commandCenters.Count+1,
                 FindPlaceCommandCenter(simulationContext, commandCenters)!,
-                actualRover, config);
+                simulationContext.Rover, config);
             return cmdCenter;
         }
         return null;

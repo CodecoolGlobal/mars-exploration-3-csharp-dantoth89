@@ -1,4 +1,6 @@
 using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service;
+using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service.CommandCenterCordinator;
+using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
@@ -25,7 +27,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     internal int NumberOfResources = 0;
     internal int PrevNumberOfResources = 0;
     private readonly PlacingCommandCenter _placingCommandCenter;
-
+    private CenterOfCommandCenters _centerOfCommandCenters = new CenterOfCommandCenters();
     public ExplorationSimulatorSteps(ICoordinateCalculator coordinateCalculator, IAnalyzer successAnalyzer,
         IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger,
         IExploringRoutine exploringRoutine, ISimulationRepository simulationRepository)
@@ -40,15 +42,14 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         _placingCommandCenter = new PlacingCommandCenter(this);
     }
 
-    public void Steps(SimulationContext simulationContext)
+    public void Steps(SimulationContext simulationContext, ConfigurationModel config)
     {
-
         Movement(simulationContext);
         Scan(simulationContext);
         Analysis(_successAnalyzer, _timeoutAnalyzer, _lackOfResourcesAnalyzer, simulationContext);
         Log(simulationContext);
         IncrementStep(simulationContext);
-        
+        _centerOfCommandCenters.AllCommandCenters.Add(_placingCommandCenter.PlaceCommandCenter(simulationContext,_centerOfCommandCenters.AllCommandCenters, config));
     }
 
     private void Movement(SimulationContext simulationContext)
@@ -97,9 +98,9 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
     private void Log(SimulationContext simulationContext)
     {
-        // if(simulationContext.Outcome != null)
-        //     _simulationRepository.Add(simulationContext.StepNumber,simulationContext.Rover.FoundResources.Count,simulationContext.Outcome);
-        //
+        if(simulationContext.Outcome != null)
+            _simulationRepository.Add(simulationContext.StepNumber,simulationContext.Rover.FoundResources.Count,simulationContext.Outcome);
+        
         string message =
             simulationContext.Outcome != null
                 ? $"STEP {simulationContext.StepNumber}; EVENT outcome; OUTCOME {simulationContext.Outcome}"

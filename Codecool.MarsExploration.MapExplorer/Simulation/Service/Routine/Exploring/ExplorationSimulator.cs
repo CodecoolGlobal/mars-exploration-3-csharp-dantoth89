@@ -38,7 +38,7 @@ public class ExplorationSimulator : IExplorationSimulator
                 count++;
                 while (simulationContext.Outcome==null)
                 {
-                    _explorationSimulationSteps.Steps(simulationContext);
+                    _explorationSimulationSteps.Steps(simulationContext, configuration);
                 }
             }
         return simulationContext;

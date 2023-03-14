@@ -1,8 +1,9 @@
+using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
 
 public interface IExplorationSimulationSteps
 {
-    void Steps(SimulationContext simulationContext);
+    void Steps(SimulationContext simulationContext, ConfigurationModel configuration);
 }
