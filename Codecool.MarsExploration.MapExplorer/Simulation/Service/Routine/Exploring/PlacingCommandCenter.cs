@@ -1,4 +1,6 @@
 using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service;
+using Codecool.MarsExploration.MapExplorer.Configuration.Model;
+using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
@@ -9,6 +11,7 @@ public class PlacingCommandCenter
 {
     private ExplorationSimulatorSteps _explorationSimulatorSteps;
     private ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
+
     public PlacingCommandCenter(ExplorationSimulatorSteps explorationSimulatorSteps)
     {
         _explorationSimulatorSteps = explorationSimulatorSteps;
@@ -21,24 +24,28 @@ public class PlacingCommandCenter
         return isTrue;
     }
 
-    public IEnumerable<Coordinate> ScanForPlaceForCommandCenter(SimulationContext simulationContext)
+    private IEnumerable<Coordinate> ScanForPlaceForCommandCenter(SimulationContext simulationContext)
     {
-        foreach (var mineral in 
-                 simulationContext.Rover.FoundResources.Where(res=> res.foundResourceSymbol=="%"))
+        foreach (var mineral in
+                 simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "%"))
         {
-            foreach (var water in 
-                     simulationContext.Rover.FoundResources.Where(res=> res.foundResourceSymbol=="*"))
+            foreach (var water in
+                     simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "*"))
             {
-                if (AreBothCoordinatesInSightRange(simulationContext, mineral, water) )
+                if (AreBothCoordinatesInSightRange(simulationContext, mineral, water))
                 {
-                    return GetAreaOfResource(simulationContext, mineral).Intersect(GetAreaOfResource(simulationContext, water));
+                    return GetAreaOfResource(simulationContext, mineral)
+                        .Intersect(GetAreaOfResource(simulationContext, water));
                 }
             }
         }
+
         return new List<Coordinate>();
     }
 
-    private static bool AreBothCoordinatesInSightRange(SimulationContext simulationContext, (string foundResourceSymbol, Coordinate foundResourceCoordinate) mineral, (string foundResourceSymbol, Coordinate foundResourceCoordinate) water)
+    private static bool AreBothCoordinatesInSightRange(SimulationContext simulationContext,
+        (string foundResourceSymbol, Coordinate foundResourceCoordinate) mineral,
+        (string foundResourceSymbol, Coordinate foundResourceCoordinate) water)
     {
         return Math.Abs(mineral.foundResourceCoordinate.X - water.foundResourceCoordinate.X) <=
                simulationContext.CommandCenterSight * 2
@@ -60,12 +67,41 @@ public class PlacingCommandCenter
         return rangeOfResource;
     }
 
-    public bool IsThereAnotherCommandCenter(IEnumerable<Coordinate> possiblePlacesForCMDC, List<Command_Center> commandCenters)
+    private bool IsThereAnotherCommandCenter(IEnumerable<Coordinate> possiblePlacesForCMDC,
+        List<Command_Center> commandCenters)
     {
-        return !possiblePlacesForCMDC.Intersect
+        return possiblePlacesForCMDC.Intersect
         (commandCenters.Select
             (CMDC => CMDC.Position).ToList()).Any();
     }
-    
 
+    private Coordinate? FindPlaceCommandCenter(SimulationContext simulationContext, List<Command_Center> commandCenters)
+    {
+        if (NewResourceFound())
+        {
+            var placesWithResources = ScanForPlaceForCommandCenter(simulationContext);
+            if (!IsThereAnotherCommandCenter(placesWithResources, commandCenters) &&
+                placesWithResources.Any(place => simulationContext.Map.Representation[place.X, place.Y] == null))
+            {
+                return placesWithResources.First(
+                    place => simulationContext.Map.Representation[place.X, place.Y] == null);
+            }
+        }
+
+        return null;
+    }
+
+    public Command_Center? PlaceCommandCenter(SimulationContext simulationContext, List<Command_Center> commandCenters,
+        MarsRoverModel actualRover, ConfigurationModel config)
+    {
+        Command_Center cmdCenter;
+        if (FindPlaceCommandCenter(simulationContext, commandCenters) != null)
+        {
+            cmdCenter = new Command_Center(commandCenters.Count+1,
+                FindPlaceCommandCenter(simulationContext, commandCenters)!,
+                actualRover, config);
+            return cmdCenter;
+        }
+        return null;
+    }
 }
