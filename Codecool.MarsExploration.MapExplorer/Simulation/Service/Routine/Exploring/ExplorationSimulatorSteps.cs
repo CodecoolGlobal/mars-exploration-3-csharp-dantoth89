@@ -13,8 +13,6 @@ using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
 
-
-
 public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 {
     private ICoordinateCalculator _coordinateCalculator;
@@ -28,6 +26,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     internal int PrevNumberOfResources = 0;
     private readonly PlacingCommandCenter _placingCommandCenter;
     private CenterOfCommandCenters _centerOfCommandCenters = new CenterOfCommandCenters();
+
     public ExplorationSimulatorSteps(ICoordinateCalculator coordinateCalculator, IAnalyzer successAnalyzer,
         IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger,
         IExploringRoutine exploringRoutine, ISimulationRepository simulationRepository)
@@ -49,7 +48,10 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         Analysis(_successAnalyzer, _timeoutAnalyzer, _lackOfResourcesAnalyzer, simulationContext);
         Log(simulationContext);
         IncrementStep(simulationContext);
-        _centerOfCommandCenters.AllCommandCenters.Add(_placingCommandCenter.PlaceCommandCenter(simulationContext,_centerOfCommandCenters.AllCommandCenters, config));
+        if (_placingCommandCenter.PlaceCommandCenter(simulationContext, _centerOfCommandCenters.AllCommandCenters,
+                config) != null)
+            _centerOfCommandCenters.AllCommandCenters.Add(_placingCommandCenter.PlaceCommandCenter(simulationContext,
+                _centerOfCommandCenters.AllCommandCenters, config));
     }
 
     private void Movement(SimulationContext simulationContext)
@@ -59,7 +61,6 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         var nextPlace = _exploringRoutine.ExploreMovement(simulationContext, possibleCoordinates);
         simulationContext.Rover.CurrentPosition = nextPlace;
         simulationContext.VisitedPlaces.Add(nextPlace);
-
     }
 
     private void Scan(SimulationContext simulationContext)
@@ -98,9 +99,10 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
     private void Log(SimulationContext simulationContext)
     {
-        if(simulationContext.Outcome != null)
-            _simulationRepository.Add(simulationContext.StepNumber,simulationContext.Rover.FoundResources.Count,simulationContext.Outcome);
-        
+        if (simulationContext.Outcome != null)
+            _simulationRepository.Add(simulationContext.StepNumber, simulationContext.Rover.FoundResources.Count,
+                simulationContext.Outcome);
+
         string message =
             simulationContext.Outcome != null
                 ? $"STEP {simulationContext.StepNumber}; EVENT outcome; OUTCOME {simulationContext.Outcome}"
