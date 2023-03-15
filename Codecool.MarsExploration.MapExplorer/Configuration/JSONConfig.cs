@@ -9,6 +9,7 @@ public class JSONConfig
     public int TimeOutSteps{get; set;}
     public int RoverCost{get; set;}
     public int RoverSight{get; set;}
+    public int CommandCenterCost { get; }
     public int CommandCenterSight{get; set;}
     public bool FileLogger{get; set;}
 }

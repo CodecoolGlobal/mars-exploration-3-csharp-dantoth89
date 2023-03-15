@@ -19,12 +19,13 @@ public class ConfigurationModel
     public Coordinate LandingSpot;
     public IEnumerable<string> NeededResourcesSymbols;
     public int TimeoutSteps;
+    public int CommandCenterCost;
     public int RoverCost;
     public int RoverSight;
     public int CommandCenterSight;
     public bool LoggerType;
 
-    public ConfigurationModel(string mapFilePath, Coordinate landingSpot, IEnumerable<string> neededResourcesSymbols, int timeoutSteps, int roverCost, int roverSight, int commandCenterSight, bool loggerType)
+    public ConfigurationModel(string mapFilePath, Coordinate landingSpot, IEnumerable<string> neededResourcesSymbols, int timeoutSteps, int roverCost, int roverSight, int commandCenterCost, int commandCenterSight, bool loggerType)
     {
         MapFilePath = mapFilePath;
         LandingSpot = landingSpot;
@@ -34,6 +35,7 @@ public class ConfigurationModel
         RoverSight = roverSight;
         CommandCenterSight = commandCenterSight;
         LoggerType = loggerType;
+        CommandCenterCost = commandCenterCost;
     }
 }
 

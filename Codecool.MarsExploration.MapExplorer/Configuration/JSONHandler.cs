@@ -34,6 +34,7 @@ public class JSONHandler
             source.TimeOutSteps,
             source.RoverCost,
             source.RoverSight,
+            source.CommandCenterCost,
             source.CommandCenterSight,
             source.FileLogger
         );
