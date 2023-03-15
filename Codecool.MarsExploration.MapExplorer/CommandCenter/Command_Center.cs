@@ -37,7 +37,7 @@ public Coordinate Position { get; }
    {
       if (!IsItActive && DeliveredResources[Resources.Mineral] == _configuration.CommandCenterCost)
       {
-         DeliveredResources[Resources.Mineral] -= _configuration.CommandCenterCost;
+         UseMineralsForConstruction(_configuration.CommandCenterCost);
          IsItActive = true;
          Console.WriteLine($"building cmdc{Id} is ready at {Position}");
       }
