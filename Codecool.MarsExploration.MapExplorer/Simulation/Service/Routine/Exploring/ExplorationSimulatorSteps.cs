@@ -112,7 +112,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         string message =
             simulationContext.Outcome != null
                 ? $"STEP {simulationContext.StepNumber}; EVENT outcome; OUTCOME {simulationContext.Outcome}"
-                : $"STEP {simulationContext.StepNumber}; EVENT position; POSITION {simulationContext.Rover.CurrentPosition}; Steps to Timeout {simulationContext.StepsToTimeOut}";
+                : $"STEP {simulationContext.StepNumber}; ROVER: {simulationContext.Rover.Id}; EVENT position; POSITION {simulationContext.Rover.CurrentPosition}; Steps to Timeout {simulationContext.StepsToTimeOut}";
         _logger.Log(message);
     }
 
