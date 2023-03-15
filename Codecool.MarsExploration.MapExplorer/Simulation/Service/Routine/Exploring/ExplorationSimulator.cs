@@ -69,19 +69,20 @@ public class ExplorationSimulator : IExplorationSimulator
         }
         var commandCenter = commandCenters[commandCenters.Count() - 1];
         outcome = (simulationContext.Outcome != null);
-        MineAndDeliverResource(commandCenter.ClosestMineral, commandCenter, simulationContext);
-        // if possible, build commandcenteer (turn active)
+        MineAndDeliverResource(Resources.Mineral, commandCenter, simulationContext);
+        // if possible, build commandcenter (turn active)
         // NEXT if possible build next rover 
         // NEXT NextRover goes for water with MineAndDeliverResource(commandCenter, simulationContext);
         // if possible start simulator again, but starting point is command center position
         return outcome;
     }
 
-    private void MineAndDeliverResource(Coordinate closestResource, Command_Center commandCenter, SimulationContext simulationContext)
+    private void MineAndDeliverResource(Resources resource, Command_Center commandCenter, SimulationContext simulationContext)
     {
+        var target = resource == Resources.Mineral ? commandCenter.ClosestMineral : commandCenter.ClosestWater;
         while (_mineOrDeliverSimulator.Finished)
         {
-            _mineOrDeliverSimulator.MoveSimulator(closestResource, simulationContext);
+            _mineOrDeliverSimulator.MoveSimulator(target, simulationContext);
         }
         while (!_mineOrDeliverSimulator.Finished)
         {
