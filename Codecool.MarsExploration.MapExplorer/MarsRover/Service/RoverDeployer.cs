@@ -18,9 +18,9 @@ public class RoverDeployer:IRoverDeployer
         _coordinateCalculator = coordinateCalculator;
     }
 
-    public MarsRoverModel DeployMarsRover(int numberOfRoversDeployed, Map map)
+    public MarsRoverModel DeployMarsRover(int numberOfRoversDeployed, Map map, Coordinate landingspotOfDeployer)
     {
-        var landingCoordinate = _coordinateCalculator.GetEmptyAdjacentCoordinates(_configuration.LandingSpot, map.Dimension, map, 1)
+        var landingCoordinate = _coordinateCalculator.GetEmptyAdjacentCoordinates(landingspotOfDeployer, map.Dimension, map, 1)
             .ToList()[0];
         var numberOfRover = numberOfRoversDeployed+1;
         var foundResources = new HashSet<(string, Coordinate)>();
