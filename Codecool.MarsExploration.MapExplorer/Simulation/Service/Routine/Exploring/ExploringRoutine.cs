@@ -31,7 +31,7 @@ public class ExploringRoutine : BaseRoutine, IExploringRoutine
         else
         {
             nextStep = ReachTargetPlace(simulationContext, targetPlaces[_reachedTarget], possiblePlaces);
-            if (_reachedTarget == targetPlaces.Count - 1)
+            if (_reachedTarget == targetPlaces.Count )
                 simulationContext.Outcome = ExplorationOutcome.NoneOfThem;
         }
         return nextStep!;
