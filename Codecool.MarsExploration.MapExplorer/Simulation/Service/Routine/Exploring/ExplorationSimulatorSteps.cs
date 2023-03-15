@@ -19,6 +19,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     private IAnalyzer _successAnalyzer;
     private IAnalyzer _timeoutAnalyzer;
     private IAnalyzer _lackOfResourcesAnalyzer;
+    private IAnalyzer _successOfCommandCenters;
     private ILogger _logger;
     private IExploringRoutine _exploringRoutine;
     private ISimulationRepository _simulationRepository;
@@ -28,11 +29,12 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
     public ExplorationSimulatorSteps(ICoordinateCalculator coordinateCalculator, IAnalyzer successAnalyzer,
         IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger,
-        IExploringRoutine exploringRoutine, ISimulationRepository simulationRepository)
+        IExploringRoutine exploringRoutine, ISimulationRepository simulationRepository, IAnalyzer successOfCommandCenters)
     {
         _coordinateCalculator = coordinateCalculator;
         _successAnalyzer = successAnalyzer;
         _timeoutAnalyzer = timeoutAnalyzer;
+        _successOfCommandCenters = successOfCommandCenters;
         _lackOfResourcesAnalyzer = lackOfResourcesAnalyzer;
         _logger = logger;
         _exploringRoutine = exploringRoutine;
@@ -44,7 +46,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     {
         Movement(simulationContext);
         Scan(simulationContext);
-        Analysis(_successAnalyzer, _timeoutAnalyzer, _lackOfResourcesAnalyzer, simulationContext);
+        Analysis(_successOfCommandCenters, _successAnalyzer, _timeoutAnalyzer, _lackOfResourcesAnalyzer, simulationContext);
         Log(simulationContext);
         IncrementStep(simulationContext);
         var newCMDCenter = _placingCommandCenter.PlaceCommandCenter(simulationContext,
@@ -88,10 +90,12 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         }
     }
 
-    private void Analysis(IAnalyzer successAnalyzer, IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer,
+    private void Analysis(IAnalyzer commandCenters, IAnalyzer successAnalyzer, IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer,
         SimulationContext simulationContext)
     {
-        if (successAnalyzer.Analyze(simulationContext))
+        if (commandCenters.Analyze(simulationContext))
+            simulationContext.Outcome = ExplorationOutcome.Colonized;
+        else if (successAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Colonizable;
         else if (timeoutAnalyzer.Analyze(simulationContext))
             simulationContext.Outcome = ExplorationOutcome.Timeout;
