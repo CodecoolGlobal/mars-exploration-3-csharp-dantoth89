@@ -1,11 +1,12 @@
 ﻿{
   "FilePath": "/Resources/exploration-1.map",
-  "LandingSpotX": 2,
-  "LandingSpotY": 2,
+  "LandingSpotX": 10,
+  "LandingSpotY": 20,
   "NeededResourceSymbol": "%*",
   "TimeOutSteps": 1000,
   "RoverCost": 3,
   "RoverSight": 2,
-  "CommandCenterSight": 5,
+  "CommandCenterCost": 5,
+  "CommandCenterSight": 20,
   "FileLogger": true
 }
