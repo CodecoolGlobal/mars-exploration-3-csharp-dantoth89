@@ -4,6 +4,7 @@ using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
+using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service;
 
@@ -43,18 +44,18 @@ public Coordinate Position { get; }
    }
    public bool DoWeHaveEnoughMineralForRover()
    {
-      
-         throw new NotImplementedException();
-      
+      return DeliveredResources[Resources.Mineral] >= _configuration.RoverCost;
+
+
    }
 
-   public bool DoWeHaveSlotForAnotherRover()
+   public bool DoWeHaveSlotForAnotherRover(Map map)
    {
-      throw new NotImplementedException();
+      return _coordinateCalculator.GetEmptyAdjacentCoordinates(Position, 1, map, 1).Any();
    }
-
-   public void UseMineralsForConstruction()
+   
+   public void UseMineralsForConstruction(int cost)
    {
-      throw new NotImplementedException();
+      DeliveredResources[Resources.Mineral] -= cost;
    }
 }
