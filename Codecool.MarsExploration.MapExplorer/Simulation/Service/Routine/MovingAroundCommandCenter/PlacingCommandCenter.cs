@@ -1,5 +1,6 @@
 using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service;
 using Codecool.MarsExploration.MapExplorer.Configuration.Model;
+using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
@@ -108,7 +109,7 @@ public class PlacingCommandCenter
             cmdCenter = new Command_Center(commandCenters.Count + 1,
                 position,
                 simulationContext.Rover, config,
-                new Dictionary<string, Coordinate>() { { "mineral", _possibleMineral }, { "water", _possibleWater } });
+                new Dictionary<Resources, Coordinate>() { { Resources.Mineral, _possibleMineral }, { Resources.Water, _possibleWater } });
             return cmdCenter;
         }
         return cmdCenter;

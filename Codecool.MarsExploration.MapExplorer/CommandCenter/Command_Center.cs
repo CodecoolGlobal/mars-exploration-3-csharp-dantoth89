@@ -1,4 +1,5 @@
 using Codecool.MarsExploration.MapExplorer.Configuration.Model;
+using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
@@ -16,25 +17,25 @@ public class Command_Center:ICommand_Center
    public Coordinate ClosestWater { get; }
    public List<MarsRoverModel> Rovers { get; set; }
    private ConfigurationModel _configuration;
-   public Dictionary<string, int> DeliveredResources { get; set; } = new Dictionary<string, int>();
+   public Dictionary<Resources, int> DeliveredResources { get; set; } = new ();
    private ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
 public Coordinate Position { get; }
-   public Command_Center(int id, Coordinate position, MarsRoverModel actualRover, ConfigurationModel config, Dictionary<string, Coordinate> closestResources)
+   public Command_Center(int id, Coordinate position, MarsRoverModel actualRover, ConfigurationModel config, Dictionary<Resources, Coordinate> closestResources)
    {
       Id = id;
       Position = position;
       Rovers = new List<MarsRoverModel>() {actualRover};
       Radius = config.CommandCenterSight;
       _configuration = config;
-      ClosestMineral = closestResources["mineral"];
-      ClosestWater = closestResources["water"];
+      ClosestMineral = closestResources[Resources.Mineral];
+      ClosestWater = closestResources[Resources.Water];
    }
 
    public void ActivateWhenBuilt()
    {
-      if (!IsItActive && DeliveredResources["mineral"] == _configuration.CommandCenterCost)
+      if (!IsItActive && DeliveredResources[Resources.Mineral] == _configuration.CommandCenterCost)
       {
-         DeliveredResources["mineral"] -= _configuration.CommandCenterCost;
+         DeliveredResources[Resources.Mineral] -= _configuration.CommandCenterCost;
          IsItActive = true;
          Console.WriteLine($"building cmdc{Id} is ready at {Position}");
       }
