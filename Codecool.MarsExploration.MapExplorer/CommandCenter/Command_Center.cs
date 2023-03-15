@@ -9,6 +9,7 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Servi
 public class Command_Center:ICommand_Center
 {
    public int Id { get; }
+   public string Symbol { get; } = "@";
    public int Radius { get; }
    public bool IsItActive { get; set; } = false;
    public List<MarsRoverModel> Rovers { get; set; }
