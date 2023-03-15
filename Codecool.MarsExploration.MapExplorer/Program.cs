@@ -52,7 +52,7 @@ class Program
 
     private static IExplorationSimulator _explorationSimulator =
         new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps, _roverFollower,
-            _mineOrDeliverSimulator);
+            _mineOrDeliverSimulator, _logger);
 
     private static IReturnSimulator _returnSimulator = new ReturnSimulator(_logger);
 
