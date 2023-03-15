@@ -1,3 +1,4 @@
+using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service;
 using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Configuration.Service;
 using Codecool.MarsExploration.MapExplorer.MapLoader;
@@ -25,7 +26,7 @@ public class ExplorationSimulator : IExplorationSimulator
         _explorationSimulationSteps = explorationSimulationSteps;
         
     }
-    public SimulationContext? ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun)
+    public SimulationContext? ExploringSimulator(Map map, ConfigurationModel configuration, int numberToRun, List<Command_Center> commandCenters)
     {
         SimulationContext simulationContext = null;
         if (!_configurationValidator.Validate(configuration, map))
@@ -35,7 +36,7 @@ public class ExplorationSimulator : IExplorationSimulator
             {
                 var rover = _roverDeployer.DeployMarsRover(count, map);
                 simulationContext = new SimulationContext(0, configuration.TimeoutSteps,
-                    rover, configuration.LandingSpot, map, configuration.NeededResourcesSymbols, null, new HashSet<Coordinate>(), new HashSet<Coordinate>(), configuration.CommandCenterSight);
+                    rover, configuration.LandingSpot, map, configuration.NeededResourcesSymbols, null, new HashSet<Coordinate>(), new HashSet<Coordinate>(), configuration.CommandCenterSight, commandCenters);
                 count++;
                 while (simulationContext.Outcome==null)
                 {
