@@ -11,6 +11,8 @@ public class PlacingCommandCenter
 {
     private ExplorationSimulatorSteps _explorationSimulatorSteps;
     private ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
+    private Coordinate _possibleMineral;
+    private Coordinate _possibleWater;
 
     public PlacingCommandCenter(ExplorationSimulatorSteps explorationSimulatorSteps)
     {
@@ -34,6 +36,8 @@ public class PlacingCommandCenter
             {
                 if (AreBothCoordinatesInSightRange(simulationContext, mineral, water))
                 {
+                    _possibleMineral = mineral.foundResourceCoordinate;
+                    _possibleWater = water.foundResourceCoordinate;
                     return GetAreaOfResource(simulationContext, mineral)
                         .Intersect(GetAreaOfResource(simulationContext, water));
                 }
@@ -90,6 +94,7 @@ public class PlacingCommandCenter
                     place => simulationContext.Map.Representation[place.X, place.Y] == null);
             }
         }
+
         return newPlace;
     }
 
@@ -102,7 +107,8 @@ public class PlacingCommandCenter
         {
             cmdCenter = new Command_Center(commandCenters.Count + 1,
                 position,
-                simulationContext.Rover, config);
+                simulationContext.Rover, config,
+                new Dictionary<string, Coordinate>() { { "mineral", _possibleMineral }, { "water", _possibleWater } });
             return cmdCenter;
         }
         return cmdCenter;
