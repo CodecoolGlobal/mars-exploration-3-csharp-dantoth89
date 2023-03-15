@@ -32,6 +32,7 @@ class Program
     private static IAnalyzer _successAnalyzer = new SuccessAnalyzer();
     private static IAnalyzer _timeoutAnalyzer = new TimeoutAnalyzer();
     private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResources();
+    private static IAnalyzer _commandCenterAnalyzer = new SuccessOfCommandCentersAnalyzer();
     private static ILogger _logger = _configuration.LoggerType ? new FileLogger() : new ConsolLogger();
     private static ISimulationRepository _simulationRepository =
         new SimulationRepository.SimulationRepository(_databaseFile);
@@ -39,7 +40,7 @@ class Program
     private static List<Command_Center> _commandCenters = new CenterOfCommandCenters().AllCommandCenters;
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
-            _lackOfResourcesAnalyzer, _logger, _exploringRoutine, _simulationRepository);
+            _lackOfResourcesAnalyzer, _logger, _exploringRoutine, _simulationRepository, _commandCenterAnalyzer);
     private static IExplorationSimulator _explorationSimulator =
         new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps);
     private static IReturnSimulator _returnSimulator = new ReturnSimulator(_logger);
