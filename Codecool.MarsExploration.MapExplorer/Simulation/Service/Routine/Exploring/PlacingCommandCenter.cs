@@ -79,31 +79,32 @@ public class PlacingCommandCenter
 
     private Coordinate? FindPlaceCommandCenter(SimulationContext simulationContext, List<Command_Center> commandCenters)
     {
+        Coordinate? newPlace = null;
         if (NewResourceFound())
         {
-            var placesWithResources = ScanForPlaceForCommandCenter(simulationContext);
-            if (!IsThereAnotherCommandCenter(placesWithResources, commandCenters) &&
-                placesWithResources.Any(place => simulationContext.Map.Representation[place.X, place.Y] == null))
+            var areaWithResources = ScanForPlaceForCommandCenter(simulationContext).ToList();
+            if (!IsThereAnotherCommandCenter(areaWithResources, commandCenters) &&
+                areaWithResources.Any(place => simulationContext.Map.Representation[place.X, place.Y] == null))
             {
-                return placesWithResources.First(
+                newPlace = areaWithResources.First(
                     place => simulationContext.Map.Representation[place.X, place.Y] == null);
             }
         }
-
-        return null;
+        return newPlace;
     }
 
     public Command_Center? PlaceCommandCenter(SimulationContext simulationContext, List<Command_Center> commandCenters,
         ConfigurationModel config)
     {
-        Command_Center cmdCenter;
-        if (FindPlaceCommandCenter(simulationContext, commandCenters) != null)
+        Command_Center? cmdCenter = null;
+        var position = FindPlaceCommandCenter(simulationContext, commandCenters);
+        if (position != null)
         {
-            cmdCenter = new Command_Center(commandCenters.Count+1,
-                FindPlaceCommandCenter(simulationContext, commandCenters)!,
+            cmdCenter = new Command_Center(commandCenters.Count + 1,
+                position,
                 simulationContext.Rover, config);
             return cmdCenter;
         }
-        return null;
+        return cmdCenter;
     }
 }
