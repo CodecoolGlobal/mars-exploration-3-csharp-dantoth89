@@ -2,5 +2,5 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Servi
 
 public class CenterOfCommandCenters
 {
-    public List<Command_Center> AllCommandCenters;
+    public List<Command_Center> AllCommandCenters = new List<Command_Center>();
 }
