@@ -17,7 +17,8 @@ public class Command_Center:ICommand_Center
    public Coordinate ClosestWater { get; }
    public List<MarsRoverModel> Rovers { get; set; }
    private ConfigurationModel _configuration;
-   public Dictionary<Resources, int> DeliveredResources { get; set; } = new ();
+   public Dictionary<Resources, int> DeliveredResources { get; set; } = new Dictionary<Resources, int>(){
+   { Resources.Mineral ,0}, { Resources.Water , 0}};
    private ICoordinateCalculator _coordinateCalculator = new CoordinateCalculator();
 public Coordinate Position { get; }
    public Command_Center(int id, Coordinate position, MarsRoverModel actualRover, ConfigurationModel config, Dictionary<Resources, Coordinate> closestResources)
