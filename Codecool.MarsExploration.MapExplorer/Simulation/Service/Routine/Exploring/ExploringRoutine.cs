@@ -1,4 +1,6 @@
-﻿namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
+﻿using Codecool.MarsExploration.MapExplorer.Exploration;
+
+namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
 
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
@@ -29,9 +31,10 @@ public class ExploringRoutine : BaseRoutine, IExploringRoutine
         else
         {
             nextStep = ReachTargetPlace(simulationContext, targetPlaces[_reachedTarget], possiblePlaces);
+            if (_reachedTarget == targetPlaces.Count - 1)
+                simulationContext.Outcome = ExplorationOutcome.NoneOfThem;
         }
-
-        return nextStep;
+        return nextStep!;
     }
 
     protected override Coordinate GetNextStepVisitedOrNot(SimulationContext simulationContext,
