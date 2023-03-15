@@ -21,12 +21,10 @@ public class MineOrDeliverySimulator : IMineAndDeliverSimulator
     Coordinate nextPlace = new Coordinate(-1, -1);
     public void MoveSimulator(Coordinate target, SimulationContext simulationContext)
     {
-        _logger.Log($"{simulationContext.Rover.Id} goes to {target} ");
         if (!_coordinateCalculator
                 .GetAdjacentCoordinates(target, simulationContext.Map.Dimension, 1)
                 .Contains(nextPlace))
         {
-            _logger.Log($"Rover is at {simulationContext.Rover.CurrentPosition}");
             var possibleCoordinates = _coordinateCalculator.GetEmptyAdjacentCoordinates(
                     simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, simulationContext.Map,
                     1)
