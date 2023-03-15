@@ -25,7 +25,6 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     internal int NumberOfResources = 0;
     internal int PrevNumberOfResources = 0;
     private readonly PlacingCommandCenter _placingCommandCenter;
-    private CenterOfCommandCenters _centerOfCommandCenters = new CenterOfCommandCenters();
 
     public ExplorationSimulatorSteps(ICoordinateCalculator coordinateCalculator, IAnalyzer successAnalyzer,
         IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger,
@@ -48,12 +47,16 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         Analysis(_successAnalyzer, _timeoutAnalyzer, _lackOfResourcesAnalyzer, simulationContext);
         Log(simulationContext);
         IncrementStep(simulationContext);
-        if (_placingCommandCenter.PlaceCommandCenter(simulationContext, _centerOfCommandCenters.AllCommandCenters,
-                config) != null)
-            _centerOfCommandCenters.AllCommandCenters.Add(_placingCommandCenter.PlaceCommandCenter(simulationContext,
-                _centerOfCommandCenters.AllCommandCenters, config));
+        var newCMDCenter = _placingCommandCenter.PlaceCommandCenter(simulationContext,
+            simulationContext.CommandCenters,
+            config);
+        if (newCMDCenter != null)
+        { 
+            simulationContext.CommandCenters.Add(newCMDCenter!);
+            simulationContext.Map.Representation[newCMDCenter.Position.X, newCMDCenter.Position.Y] =
+                newCMDCenter.Symbol;
+        }
     }
-
     private void Movement(SimulationContext simulationContext)
     {
         var possibleCoordinates = _coordinateCalculator.GetEmptyAdjacentCoordinates(
@@ -71,7 +74,6 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
             discoveredCoordinates.AddRange(_coordinateCalculator.GetAdjacentCoordinates(
                 simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, i));
         }
-
         simulationContext.Rover.DiscoveredCoordinates.UnionWith(discoveredCoordinates);
         simulationContext.Rover.DiscoveredCoordinates.Add(simulationContext.Rover.CurrentPosition);
         foreach (var coordinate in discoveredCoordinates)
