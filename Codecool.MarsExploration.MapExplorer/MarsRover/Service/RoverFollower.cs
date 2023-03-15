@@ -6,7 +6,7 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 
 public class RoverFollower:IRoverFollower
 {
-    public List<MarsRoverModel> AllMarsRovers { get; set; }
+    public List<MarsRoverModel> AllMarsRovers { get; set; } = new List<MarsRoverModel>();
     public int NumberOfMarsRovers()
     {
         return AllMarsRovers.Count;
