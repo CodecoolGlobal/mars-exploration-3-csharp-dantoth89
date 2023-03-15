@@ -21,8 +21,10 @@ class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
     private static char separator = Path.DirectorySeparatorChar;
+
     private static string _databaseFile =
         $@"{WorkDir.Replace($@"{separator}bin{separator}Debug{separator}net6.0{separator}", "")}{separator}Resources{separator}SimulationDataBase.db";
+
     private static JSONHandler _jsonHandler = new JSONHandler();
     private static ConfigurationModel _configuration = _jsonHandler.JSONConverter(WorkDir);
     private static IMapLoader _mapLoader = new MapLoader.MapLoader();
@@ -34,38 +36,33 @@ class Program
     private static IAnalyzer _lackOfResourcesAnalyzer = new LackOfResources();
     private static IAnalyzer _commandCenterAnalyzer = new SuccessOfCommandCentersAnalyzer();
     private static ILogger _logger = _configuration.LoggerType ? new FileLogger() : new ConsolLogger();
+
     private static ISimulationRepository _simulationRepository =
         new SimulationRepository.SimulationRepository(_databaseFile);
+
     private static IExploringRoutine _exploringRoutine = new ExploringRoutine();
+    private static IRoverFollower _roverFollower = new RoverFollower();
     private static List<Command_Center> _commandCenters = new CenterOfCommandCenters().AllCommandCenters;
+
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
             _lackOfResourcesAnalyzer, _logger, _exploringRoutine, _simulationRepository, _commandCenterAnalyzer);
+
+    private static IMineAndDeliverSimulator _mineOrDeliverSimulator = new MineOrDeliverySimulator(_logger);
+
     private static IExplorationSimulator _explorationSimulator =
-        new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps);
+        new ExplorationSimulator(_roverDeployer, _configurationValidator, _explorationSimulationSteps, _roverFollower,
+            _mineOrDeliverSimulator);
+
     private static IReturnSimulator _returnSimulator = new ReturnSimulator(_logger);
+
     public static void Main(string[] args)
     {
         File.Delete($@"{WorkDir}/Resources/message.txt");
         var map = _mapLoader.Load(_configuration.MapFilePath);
         try
         {
-            var simCont =
-                _explorationSimulator.ExploringSimulator(map, _configuration, 1, _commandCenters);
-            if (simCont != null)
-            {
-                _returnSimulator.ReturningSimulator(simCont);
-                foreach (var visited in simCont.VisitedPlaces)
-                {
-                    map.Representation[visited.X, visited.Y] = "0";
-                }
-                // foreach (var visited in simCont.VisitedForReturn)
-                // {
-                //     map.Representation[visited.X, visited.Y] = "O";
-                // }
-                Console.WriteLine(_commandCenters.Count);
-            }
-
+            _explorationSimulator.ExploringSimulator(map, _configuration, 1, _commandCenters);
             Console.WriteLine(map);
         }
         catch (Exception e)
