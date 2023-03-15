@@ -26,7 +26,6 @@ public class MineOrDeliverySimulator : IMineAndDeliverSimulator
                 .GetAdjacentCoordinates(target, simulationContext.Map.Dimension, 1)
                 .Contains(nextPlace))
         {
-            Console.WriteLine(target);
             _logger.Log($"Rover is at {simulationContext.Rover.CurrentPosition}");
             var possibleCoordinates = _coordinateCalculator.GetEmptyAdjacentCoordinates(
                     simulationContext.Rover.CurrentPosition, simulationContext.Map.Dimension, simulationContext.Map,
