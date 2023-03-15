@@ -7,10 +7,8 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Servi
 public interface ICommand_Center
 {
 
-    public void ActivateWhenBuilt()
-    {
-        
-    }
+    public void ActivateWhenBuilt();
+  
     public bool DoWeHaveEnoughMineralForRover();
 
     public bool DoWeHaveSlotForAnotherRover(Map map);
