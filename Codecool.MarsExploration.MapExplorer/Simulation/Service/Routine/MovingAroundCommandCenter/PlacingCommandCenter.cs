@@ -2,6 +2,7 @@ using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service;
 using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
+using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Service;
@@ -31,17 +32,21 @@ public class PlacingCommandCenter
     {
         var minerals = simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "%");
         var waters = simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "*");
-        List<List<Coordinate>> listOfAreaLists = new List<List<Coordinate>>();
-        foreach (var mineral in minerals)
-        {
-            var water= waters.MinBy(water => Math.Abs(water.foundResourceCoordinate.X - mineral.foundResourceCoordinate.X) +
-                                  Math.Abs(water.foundResourceCoordinate.Y - mineral.foundResourceCoordinate.Y));
-            if (AreBothCoordinatesInSightRange(simulationContext, mineral, water))
+            List<List<Coordinate>> listOfAreaLists = new List<List<Coordinate>>();
+            foreach (var mineral in minerals)
             {
-                _possibleMineral = mineral.foundResourceCoordinate;
-                _possibleWater = water.foundResourceCoordinate;
-                listOfAreaLists.Add(GetAreaOfResource(simulationContext, mineral)
-                    .Intersect(GetAreaOfResource(simulationContext, water)).ToList());
+                if (minerals.Any() && waters.Any())
+                {
+                var water = waters.MinBy(water =>
+                    Math.Abs(water.foundResourceCoordinate.X - mineral.foundResourceCoordinate.X) +
+                    Math.Abs(water.foundResourceCoordinate.Y - mineral.foundResourceCoordinate.Y));
+                if (AreBothCoordinatesInSightRange(simulationContext, mineral, water))
+                {
+                    _possibleMineral = mineral.foundResourceCoordinate;
+                    _possibleWater = water.foundResourceCoordinate;
+                    listOfAreaLists.Add(GetAreaOfResource(simulationContext, mineral)
+                        .Intersect(GetAreaOfResource(simulationContext, water)).ToList());
+                }
             }
         }
         return listOfAreaLists.Count()==0? new List<Coordinate>(): listOfAreaLists.MaxBy(list=> list.Count);
