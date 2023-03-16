@@ -91,11 +91,23 @@ public class PlacingCommandCenter
             if (!IsThereAnotherCommandCenter(areaWithResources, commandCenters) &&
                 areaWithResources.Any(place => simulationContext.Map.Representation[place.X, place.Y] == null))
             {
-                newPlace = areaWithResources.First(
+                var newEmptyPlaces = areaWithResources.Where(
                     place => simulationContext.Map.Representation[place.X, place.Y] == null);
+                newPlace = FindPlaceClosestToMiddle(newEmptyPlaces);
             }
         }
 
+        return newPlace;
+    }
+
+    private Coordinate FindPlaceClosestToMiddle(IEnumerable<Coordinate> newEmptyPlaces)
+    {
+        Coordinate newPlace;
+        int averageX = (int)newEmptyPlaces.Average(newEmptyPlace => newEmptyPlace.X);
+        int averageY = (int)newEmptyPlaces.Average(newEmptyPlace => newEmptyPlace.Y);
+        int newX = newEmptyPlaces.MinBy(newEmptyPlace => Math.Abs(newEmptyPlace.X - averageX)).X;
+        int newY = newEmptyPlaces.MinBy(newEmptyPlace => Math.Abs(newEmptyPlace.Y - averageY)).Y;
+        newPlace = new Coordinate(newX, newY);
         return newPlace;
     }
 
@@ -110,6 +122,7 @@ public class PlacingCommandCenter
                 position,
                 simulationContext.Rover, config,
                 new Dictionary<Resources, Coordinate>() { { Resources.Mineral, _possibleMineral }, { Resources.Water, _possibleWater } });
+           Console.WriteLine($"mineral : {_possibleMineral}, water: {_possibleWater}");
             return cmdCenter;
         }
         return cmdCenter;
