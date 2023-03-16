@@ -30,9 +30,10 @@ public class ExploringRoutine : BaseRoutine, IExploringRoutine
         }
         else
         {
-            nextStep = ReachTargetPlace(simulationContext, targetPlaces[_reachedTarget], possiblePlaces);
             if (_reachedTarget == targetPlaces.Count )
                 simulationContext.Outcome = ExplorationOutcome.NoneOfThem;
+            else
+            nextStep = ReachTargetPlace(simulationContext, targetPlaces[_reachedTarget], possiblePlaces);
         }
         return nextStep!;
     }
