@@ -46,7 +46,8 @@ class Program
 
     private static IExplorationSimulationSteps _explorationSimulationSteps =
         new ExplorationSimulatorSteps(_coordinateCalculator, _successAnalyzer, _timeoutAnalyzer,
-            _lackOfResourcesAnalyzer, _logger, _exploringRoutine, _simulationRepository, _commandCenterAnalyzer, _roverFollower);
+            _lackOfResourcesAnalyzer, _logger, _exploringRoutine, _simulationRepository, _commandCenterAnalyzer,
+            _roverFollower);
 
     private static IMineAndDeliverSimulator _mineOrDeliverSimulator = new MineOrDeliverySimulator(_logger);
 
@@ -64,24 +65,6 @@ class Program
         {
             _explorationSimulator.ExploringSimulator(map, _configuration, 1, _commandCenters);
             Console.WriteLine(map);
-            Console.WriteLine("Routes of rovers:");
-            foreach (var simCont in _explorationSimulator.SimulationContexts)
-            {
-                foreach (var place in _roverFollower.AllDiscoveredPlaces())
-                    // foreach (var place in simCont.VisitedPlaces)
-                {
-                    try
-                    {
-                        map.Representation[place.X, place.Y] = "O";
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(place);
-                    }
-                }
-            }
-            Console.WriteLine(map);
-            Console.WriteLine(_roverFollower.AllDiscoveredPlaces().Count + " " + map.Dimension*map.Dimension*0.7);
         }
         catch (Exception e)
         {
