@@ -46,7 +46,7 @@ public abstract class BaseRoutine
             var commonPossiblePlaces =
                 possiblePlaces.Intersect(GetNotOccupiedNeighboursOfNextStep(simulationContext));
             if (commonPossiblePlaces.Any())
-                return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
+                return GetNextStepVisitedOrNot(simulationContext, commonPossiblePlaces, target);
             else
                 return GetNextStepVisitedOrNot(simulationContext, possiblePlaces, target);
         }
