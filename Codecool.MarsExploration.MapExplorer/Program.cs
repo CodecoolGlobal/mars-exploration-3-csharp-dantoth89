@@ -23,7 +23,7 @@ class Program
     private static char separator = Path.DirectorySeparatorChar;
 
     private static string _databaseFile =
-        $@"{WorkDir.Replace($@"{separator}bin{separator}Debug{separator}net6.0{separator}", "")}{separator}Resources{separator}SimulationDataBase.db";
+        $@"{WorkDir.Replace($@"{separator}bin{separator}Debug{separator}net6.0{separator}", "")}{separator}DataBase{separator}SimulationDataBase.db";
 
     private static JSONHandler _jsonHandler = new JSONHandler();
     private static ConfigurationModel _configuration = _jsonHandler.JSONConverter(WorkDir);
