@@ -84,6 +84,7 @@ public class ExplorationSimulator : IExplorationSimulator
                 if (simulationContext.Outcome != null)
                     return true;
             }
+
             outcome = (simulationContext.Outcome != null);
 
             commandCenter = commandCenters[commandCenters.Count() - 1];
@@ -94,10 +95,9 @@ public class ExplorationSimulator : IExplorationSimulator
             {
                 counterForCmdCBuilding = MineAndDeliverResource(Resources.Mineral, commandCenter, simulationContext);
                 commandCenter.ActivateWhenBuilt();
-            } while (!commandCenter.IsItActive &&
-                     !commandCenter.DoWeHaveEnoughMineralForRover() &&
-                     !commandCenter.DoWeHaveSlotForAnotherRover(map) &&
-                     counterForCmdCBuilding < configuration.CommandCenterSight * 2);
+            } while (!(commandCenter.IsItActive &&
+                       commandCenter.DoWeHaveEnoughMineralForRover() ||
+                       counterForCmdCBuilding > configuration.CommandCenterSight * 2));
         } while (counterForCmdCBuilding > configuration.CommandCenterSight * 2);
 
         _logger.Log($"\nBuilding command_center-{commandCenter.Id} is ready at {commandCenter.Position}\n");
@@ -114,6 +114,7 @@ public class ExplorationSimulator : IExplorationSimulator
             commandCenter.ActivateWhenBuilt();
         } while (commandCenter.DoWeHaveEnoughMineralForRover() &&
                  commandCenter.DoWeHaveSlotForAnotherRover(map));
+
         return outcome;
     }
 
@@ -123,7 +124,8 @@ public class ExplorationSimulator : IExplorationSimulator
         var newRover =
             _roverDeployer.DeployMarsRover(_roverFollower.AllMarsRovers.Count, map, roverStarting);
         _roverFollower.AllMarsRovers.Add(newRover);
-        SimulationContexts.Add(new SimulationContext(prevStepNumbers, configuration.TimeoutSteps - prevStepNumbers, newRover,
+        SimulationContexts.Add(new SimulationContext(prevStepNumbers, configuration.TimeoutSteps - prevStepNumbers,
+            newRover,
             roverStarting, map,
             configuration.NeededResourcesSymbols, null, new HashSet<Coordinate>(), new HashSet<Coordinate>(),
             configuration.CommandCenterSight,
@@ -141,14 +143,19 @@ public class ExplorationSimulator : IExplorationSimulator
             counter++;
             _mineOrDeliverSimulator.MoveSimulator(target, simulationContext);
         }
+
         counter = 0;
         while (!_mineOrDeliverSimulator.Finished && counter <= commandCenter.Radius * 2)
         {
             counter++;
             _mineOrDeliverSimulator.MoveSimulator(commandCenter.Position, simulationContext);
         }
+
         if (_mineOrDeliverSimulator.Finished)
+        {
             commandCenter.DeliveredResources[resource]++;
+        }
+
         return counter;
     }
 }
