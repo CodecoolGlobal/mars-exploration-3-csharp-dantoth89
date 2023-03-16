@@ -16,6 +16,6 @@ public class SuccessAnalyzer:IAnalyzer
             else if (foundResourceSymbol == "*") water++;
         }
 
-        return minerals >= 4 && water >= 3;
+        return minerals >= 20 && water >= 20;
     }
 }
