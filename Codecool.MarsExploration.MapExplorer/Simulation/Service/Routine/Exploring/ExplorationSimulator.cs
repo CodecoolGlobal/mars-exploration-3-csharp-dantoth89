@@ -125,7 +125,7 @@ public class ExplorationSimulator : IExplorationSimulator
         _roverFollower.AllMarsRovers.Add(newRover);
         SimulationContexts.Add(new SimulationContext(prevStepNumbers, configuration.TimeoutSteps - prevStepNumbers, newRover,
             roverStarting, map,
-            configuration.NeededResourcesSymbols, null, _roverFollower.AllDiscoveredPlaces(), new HashSet<Coordinate>(),
+            configuration.NeededResourcesSymbols, null, new HashSet<Coordinate>(), new HashSet<Coordinate>(),
             configuration.CommandCenterSight,
             commandCenters));
         return SimulationContexts[^1];
