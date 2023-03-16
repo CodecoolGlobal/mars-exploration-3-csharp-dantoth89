@@ -3,15 +3,18 @@ using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Exploring;
 
-public class MovingRoutine:BaseRoutine
+public class MovingRoutine : BaseRoutine
 {
-    public Coordinate GoToTarget(Coordinate target, SimulationContext simulationContext, List<Coordinate> possiblePlaces)
+    public Coordinate GoToTarget(Coordinate target, SimulationContext simulationContext,
+        List<Coordinate> possiblePlaces)
     {
-       return ReachTargetPlace(simulationContext, target, possiblePlaces)!;
+        return ReachTargetPlace(simulationContext, target, possiblePlaces)!;
     }
+
     protected override Coordinate GetNextStepVisitedOrNot(SimulationContext simulationContext,
         IEnumerable<Coordinate> possiblePlaces, Coordinate target)
     {
+        simulationContext.VisitedPlaces.Clear();
         foreach (var place in possiblePlaces)
         {
             if (!simulationContext.VisitedPlaces.Contains(place))
@@ -19,6 +22,7 @@ public class MovingRoutine:BaseRoutine
                 return CalculateBestPossiblePlace(target, possiblePlaces.Except(simulationContext.VisitedPlaces));
             }
         }
+
         return CalculateBestPossiblePlace(target, possiblePlaces);
     }
 }
