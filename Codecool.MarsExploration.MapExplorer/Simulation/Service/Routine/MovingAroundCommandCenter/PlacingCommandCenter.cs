@@ -29,25 +29,23 @@ public class PlacingCommandCenter
 
     private IEnumerable<Coordinate> ScanForPlaceForCommandCenter(SimulationContext simulationContext)
     {
-        foreach (var mineral in
-                 simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "%"))
+        var minerals = simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "%");
+        var waters = simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "*");
+        List<List<Coordinate>> listOfAreaLists = new List<List<Coordinate>>();
+        foreach (var mineral in minerals)
         {
-            foreach (var water in
-                     simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "*"))
+            var water= waters.MinBy(water => Math.Abs(water.foundResourceCoordinate.X - mineral.foundResourceCoordinate.X) +
+                                  Math.Abs(water.foundResourceCoordinate.Y - mineral.foundResourceCoordinate.Y));
+            if (AreBothCoordinatesInSightRange(simulationContext, mineral, water))
             {
-                if (AreBothCoordinatesInSightRange(simulationContext, mineral, water))
-                {
-                    _possibleMineral = mineral.foundResourceCoordinate;
-                    _possibleWater = water.foundResourceCoordinate;
-                    return GetAreaOfResource(simulationContext, mineral)
-                        .Intersect(GetAreaOfResource(simulationContext, water));
-                }
+                _possibleMineral = mineral.foundResourceCoordinate;
+                _possibleWater = water.foundResourceCoordinate;
+                listOfAreaLists.Add(GetAreaOfResource(simulationContext, mineral)
+                    .Intersect(GetAreaOfResource(simulationContext, water)).ToList());
             }
         }
-
-        return new List<Coordinate>();
+        return listOfAreaLists.Count()==0? new List<Coordinate>(): listOfAreaLists.MaxBy(list=> list.Count);
     }
-
     private static bool AreBothCoordinatesInSightRange(SimulationContext simulationContext,
         (string foundResourceSymbol, Coordinate foundResourceCoordinate) mineral,
         (string foundResourceSymbol, Coordinate foundResourceCoordinate) water)
@@ -122,7 +120,7 @@ public class PlacingCommandCenter
                 position,
                 simulationContext.Rover, config,
                 new Dictionary<Resources, Coordinate>() { { Resources.Mineral, _possibleMineral }, { Resources.Water, _possibleWater } });
-           Console.WriteLine($"mineral : {_possibleMineral}, water: {_possibleWater}");
+           Console.WriteLine($"mineral : {_possibleMineral}, water: {_possibleWater}, cmdC: {cmdCenter.Position}");
             return cmdCenter;
         }
         return cmdCenter;
