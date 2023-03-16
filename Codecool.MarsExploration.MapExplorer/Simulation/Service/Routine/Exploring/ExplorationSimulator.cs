@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service;
 using Codecool.MarsExploration.MapExplorer.Configuration.CommandCenter.Service.CommandCenterCordinator;
 using Codecool.MarsExploration.MapExplorer.Configuration.Model;
@@ -22,6 +23,7 @@ public class ExplorationSimulator : IExplorationSimulator
     private IRoverFollower _roverFollower;
     private IMineAndDeliverSimulator _mineOrDeliverSimulator;
     private ILogger _logger;
+    public List<SimulationContext> SimulationContexts = new List<SimulationContext>();
 
     public ExplorationSimulator(IRoverDeployer roverDeployer,
         IConfigurationValidator configurationValidator,
@@ -53,7 +55,8 @@ public class ExplorationSimulator : IExplorationSimulator
             throw new Exception("Error! Wrong configurations");
         while (!outcome)
         {
-            outcome = RunSimulation(map, configuration, commandCenters, prevnumberOfCMDCs, ref actualnumberOfCMDCs, prevStepNumbers);
+            outcome = RunSimulation(map, configuration, commandCenters, prevnumberOfCMDCs, ref actualnumberOfCMDCs,
+                prevStepNumbers);
             prevnumberOfCMDCs = actualnumberOfCMDCs;
             prevStepNumbers = simulationContext.StepNumber;
         }
@@ -66,39 +69,45 @@ public class ExplorationSimulator : IExplorationSimulator
         int prevStepNumbers)
     {
         simulationContext = MakeNewRover(map, configuration, commandCenters, prevStepNumbers);
-        _logger.Log($" ");
-        _logger.Log($"New rover built. ID: {simulationContext.Rover.Id}," +
+        _logger.Log($"\nNew rover built. ID: {simulationContext.Rover.Id}," +
                     $" position: {simulationContext.Rover.CurrentPosition}," +
-                    $"Task: Find new place for next command_center");
-        _logger.Log($" ");
-        while (prevnumberOfCMDCs == actualnumberOfCMDCs)
-        {
-            actualnumberOfCMDCs = commandCenters.Count;
-            _explorationSimulationSteps.Steps(simulationContext, configuration);
-        }
-
-        var commandCenter = commandCenters[commandCenters.Count() - 1];
-        var outcome = (simulationContext.Outcome != null);
+                    $"Task: Find new place for next command_center\n");
+        int counterForCmdCBuilding = 0;
+        Command_Center commandCenter;
+        bool outcome;
         do
         {
-            _logger.Log($" ");
-            _logger.Log($"The {simulationContext.Rover.Id} has new task: deliver mineral to command_center-{commandCenter.Id}");
-            _logger.Log($" ");
-            MineAndDeliverResource(Resources.Mineral, commandCenter, simulationContext);
-            commandCenter.ActivateWhenBuilt();
-        } while (commandCenter.IsItActive && commandCenter.DoWeHaveEnoughMineralForRover() &&
-                 commandCenter.DoWeHaveSlotForAnotherRover(map));
-        _logger.Log($" ");
-        _logger.Log($"Building command_center-{commandCenter.Id} is ready at {commandCenter.Position}");
-        _logger.Log($" ");
+            counterForCmdCBuilding = 0;
+            while (prevnumberOfCMDCs == actualnumberOfCMDCs)
+            {
+                actualnumberOfCMDCs = commandCenters.Count;
+                _explorationSimulationSteps.Steps(simulationContext, configuration);
+                if (simulationContext.Outcome != null)
+                    return true;
+            }
+            outcome = (simulationContext.Outcome != null);
+
+            commandCenter = commandCenters[commandCenters.Count() - 1];
+            prevnumberOfCMDCs = commandCenters.Count;
+            _logger.Log(
+                $"\nThe {simulationContext.Rover.Id} has new task: deliver mineral to command_center-{commandCenter.Id}\n");
+            do
+            {
+                counterForCmdCBuilding = MineAndDeliverResource(Resources.Mineral, commandCenter, simulationContext);
+                commandCenter.ActivateWhenBuilt();
+            } while (!commandCenter.IsItActive &&
+                     !commandCenter.DoWeHaveEnoughMineralForRover() &&
+                     !commandCenter.DoWeHaveSlotForAnotherRover(map) &&
+                     counterForCmdCBuilding < configuration.CommandCenterSight * 2);
+        } while (counterForCmdCBuilding > configuration.CommandCenterSight * 2);
+
+        _logger.Log($"\nBuilding command_center-{commandCenter.Id} is ready at {commandCenter.Position}\n");
         commandCenter.UseMineralsForConstruction(configuration.RoverCost);
         roverStarting = commandCenter.Position;
         var newSimCont = MakeNewRover(map, configuration, commandCenters, simulationContext.StepNumber);
-        _logger.Log($" ");
-        _logger.Log($"New rover built. ID: {newSimCont.Rover.Id}," +
+        _logger.Log($"\nNew rover built. ID: {newSimCont.Rover.Id}," +
                     $" position: {newSimCont.Rover.CurrentPosition}," +
-                    $"Task: deliver water to command_center-{commandCenter.Id}");
-        _logger.Log($" ");
+                    $"Task: deliver water to command_center-{commandCenter.Id}\n");
         MineAndDeliverResource(Resources.Water, commandCenter, newSimCont);
         do
         {
@@ -115,27 +124,32 @@ public class ExplorationSimulator : IExplorationSimulator
         var newRover =
             _roverDeployer.DeployMarsRover(_roverFollower.AllMarsRovers.Count, map, roverStarting);
         _roverFollower.AllMarsRovers.Add(newRover);
-        var newSimCont = new SimulationContext(prevStepNumbers, configuration.TimeoutSteps, newRover, roverStarting, map,
+        var newSimCont = new SimulationContext(prevStepNumbers, configuration.TimeoutSteps - prevStepNumbers, newRover,
+            roverStarting, map,
             configuration.NeededResourcesSymbols, null, _roverFollower.AllDiscoveredPlaces(), new HashSet<Coordinate>(),
             configuration.CommandCenterSight,
             commandCenters);
         return newSimCont;
     }
 
-    private void MineAndDeliverResource(Resources resource, Command_Center commandCenter,
+    private int MineAndDeliverResource(Resources resource, Command_Center commandCenter,
         SimulationContext simulationContext)
     {
+        int counter = 0;
         var target = resource == Resources.Mineral ? commandCenter.ClosestMineral : commandCenter.ClosestWater;
-        while (_mineOrDeliverSimulator.Finished)
+        while (_mineOrDeliverSimulator.Finished && counter <= commandCenter.Radius * 2)
         {
+            counter++;
             _mineOrDeliverSimulator.MoveSimulator(target, simulationContext);
         }
-
-        while (!_mineOrDeliverSimulator.Finished)
+        counter = 0;
+        while (!_mineOrDeliverSimulator.Finished && counter <= commandCenter.Radius * 2)
         {
+            counter++;
             _mineOrDeliverSimulator.MoveSimulator(commandCenter.Position, simulationContext);
         }
-
-        commandCenter.DeliveredResources[resource]++;
+        if (_mineOrDeliverSimulator.Finished)
+            commandCenter.DeliveredResources[resource]++;
+        return counter;
     }
 }
