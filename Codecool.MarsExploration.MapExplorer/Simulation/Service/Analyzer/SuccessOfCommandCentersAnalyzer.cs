@@ -7,6 +7,6 @@ public class SuccessOfCommandCentersAnalyzer:IAnalyzer
 {
     public bool Analyze(SimulationContext simulationContext, IRoverFollower roverFollower)
     {
-        return simulationContext.CommandCenters.Count >= 2;
+        return simulationContext.CommandCenters.Count(center => center.IsItActive) >= 2;
     }
 }
