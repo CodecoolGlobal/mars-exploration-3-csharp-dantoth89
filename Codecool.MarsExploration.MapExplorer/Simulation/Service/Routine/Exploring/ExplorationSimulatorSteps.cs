@@ -4,6 +4,7 @@ using Codecool.MarsExploration.MapExplorer.Configuration.Model;
 using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.Logger;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
+using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 using Codecool.MarsExploration.MapExplorer.Simulation.Service.Analyzer;
 using Codecool.MarsExploration.MapExplorer.SimulationRepository;
@@ -15,6 +16,7 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Routine.Explor
 
 public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 {
+    private IRoverFollower _roverFollower;
     private ICoordinateCalculator _coordinateCalculator;
     private IAnalyzer _successAnalyzer;
     private IAnalyzer _timeoutAnalyzer;
@@ -29,7 +31,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
     public ExplorationSimulatorSteps(ICoordinateCalculator coordinateCalculator, IAnalyzer successAnalyzer,
         IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer, ILogger logger,
-        IExploringRoutine exploringRoutine, ISimulationRepository simulationRepository, IAnalyzer successOfCommandCenters)
+        IExploringRoutine exploringRoutine, ISimulationRepository simulationRepository, IAnalyzer successOfCommandCenters, IRoverFollower roverFollower)
     {
         _coordinateCalculator = coordinateCalculator;
         _successAnalyzer = successAnalyzer;
@@ -40,6 +42,7 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
         _exploringRoutine = exploringRoutine;
         _simulationRepository = simulationRepository;
         _placingCommandCenter = new PlacingCommandCenter(this);
+        _roverFollower = roverFollower;
     }
 
     public void Steps(SimulationContext simulationContext, ConfigurationModel config)
@@ -93,13 +96,13 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
     private void Analysis(IAnalyzer commandCenters, IAnalyzer successAnalyzer, IAnalyzer timeoutAnalyzer, IAnalyzer lackOfResourcesAnalyzer,
         SimulationContext simulationContext)
     {
-        if (commandCenters.Analyze(simulationContext))
+        if (commandCenters.Analyze(simulationContext, _roverFollower))
             simulationContext.Outcome = ExplorationOutcome.Colonized;
-        else if (successAnalyzer.Analyze(simulationContext))
+        else if (successAnalyzer.Analyze(simulationContext, _roverFollower))
             simulationContext.Outcome = ExplorationOutcome.Colonizable;
-        else if (timeoutAnalyzer.Analyze(simulationContext))
+        else if (timeoutAnalyzer.Analyze(simulationContext, _roverFollower))
             simulationContext.Outcome = ExplorationOutcome.Timeout;
-        else if (lackOfResourcesAnalyzer.Analyze(simulationContext))
+        else if (lackOfResourcesAnalyzer.Analyze(simulationContext, _roverFollower))
             simulationContext.Outcome = ExplorationOutcome.Error;
     }
 

@@ -23,7 +23,7 @@ public class ExplorationSimulator : IExplorationSimulator
     private IRoverFollower _roverFollower;
     private IMineAndDeliverSimulator _mineOrDeliverSimulator;
     private ILogger _logger;
-    public List<SimulationContext> SimulationContexts = new List<SimulationContext>();
+    public List<SimulationContext> SimulationContexts { get; set; } = new List<SimulationContext>();
 
     public ExplorationSimulator(IRoverDeployer roverDeployer,
         IConfigurationValidator configurationValidator,
@@ -60,7 +60,6 @@ public class ExplorationSimulator : IExplorationSimulator
             prevnumberOfCMDCs = actualnumberOfCMDCs;
             prevStepNumbers = simulationContext.StepNumber;
         }
-        // return simulationContext;
     }
 
     private bool RunSimulation(Map map, ConfigurationModel configuration, List<Command_Center> commandCenters,
@@ -70,13 +69,13 @@ public class ExplorationSimulator : IExplorationSimulator
     {
         simulationContext = MakeNewRover(map, configuration, commandCenters, prevStepNumbers);
         _logger.Log($"\nNew rover built. ID: {simulationContext.Rover.Id}," +
-                    $" position: {simulationContext.Rover.CurrentPosition}," +
-                    $"Task: Find new place for next command_center\n");
+                    $" position: {simulationContext.Rover.CurrentPosition},\n");
         int counterForCmdCBuilding = 0;
         Command_Center commandCenter;
         bool outcome;
         do
         {
+            _logger.Log($"\nThe {simulationContext.Rover.Id}'s task: Find new place for next command_center\n");
             counterForCmdCBuilding = 0;
             while (prevnumberOfCMDCs == actualnumberOfCMDCs)
             {
@@ -124,12 +123,12 @@ public class ExplorationSimulator : IExplorationSimulator
         var newRover =
             _roverDeployer.DeployMarsRover(_roverFollower.AllMarsRovers.Count, map, roverStarting);
         _roverFollower.AllMarsRovers.Add(newRover);
-        var newSimCont = new SimulationContext(prevStepNumbers, configuration.TimeoutSteps - prevStepNumbers, newRover,
+        SimulationContexts.Add(new SimulationContext(prevStepNumbers, configuration.TimeoutSteps - prevStepNumbers, newRover,
             roverStarting, map,
             configuration.NeededResourcesSymbols, null, _roverFollower.AllDiscoveredPlaces(), new HashSet<Coordinate>(),
             configuration.CommandCenterSight,
-            commandCenters);
-        return newSimCont;
+            commandCenters));
+        return SimulationContexts[^1];
     }
 
     private int MineAndDeliverResource(Resources resource, Command_Center commandCenter,

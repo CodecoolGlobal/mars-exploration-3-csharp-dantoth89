@@ -1,10 +1,11 @@
+using Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 using Codecool.MarsExploration.MapExplorer.Simulation.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Analyzer;
 
 public class SuccessAnalyzer:IAnalyzer
 {
-    public bool Analyze(SimulationContext simulationContext)
+    public bool Analyze(SimulationContext simulationContext, IRoverFollower roverFollower)
     {
         int minerals = 0;
         int water = 0;
