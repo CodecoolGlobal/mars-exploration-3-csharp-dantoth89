@@ -114,9 +114,22 @@ public class ExplorationSimulatorSteps : IExplorationSimulationSteps
 
         string message =
             simulationContext.Outcome != null
-                ? $"STEP {simulationContext.StepNumber}; EVENT outcome; OUTCOME {simulationContext.Outcome}"
-                : $"STEP {simulationContext.StepNumber}; ROVER: {simulationContext.Rover.Id}; EVENT position; POSITION {simulationContext.Rover.CurrentPosition}; Steps to Timeout {simulationContext.StepsToTimeOut}";
+                ? $"STEP {simulationContext.StepNumber}; " +
+                  $"EVENT outcome; OUTCOME {simulationContext.Outcome}\n" +
+                  $"{ResultOfRun(simulationContext)}"
+                : $"STEP {simulationContext.StepNumber}; " +
+                  $"ROVER: {simulationContext.Rover.Id}; " +
+                  $"EVENT position; POSITION {simulationContext.Rover.CurrentPosition}; " +
+                  $"Steps to Timeout {simulationContext.StepsToTimeOut}";
         _logger.Log(message);
+    }
+
+    private string ResultOfRun(SimulationContext simulationContext)
+    {
+        return $"Number of command centers built: {simulationContext.CommandCenters.Count(cmdC=>cmdC.IsItActive)} \n" +
+               $"Resources found: \n" +
+               $"minerals: {_roverFollower.AllFoundResources().Count(res => res.Item1=="%")}, " +
+               $"water: {_roverFollower.AllFoundResources().Count(res => res.Item1=="*")}";
     }
 
     private void IncrementStep(SimulationContext simulationContext)
