@@ -1,3 +1,4 @@
+using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 
@@ -13,4 +14,5 @@ public interface IRoverFollower
 
     public HashSet<Coordinate> AllDiscoveredPlaces();
 
+    public HashSet<(string, Coordinate)> AllFoundResources();
 }
