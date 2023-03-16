@@ -31,6 +31,7 @@ public class MineOrDeliverySimulator : IMineAndDeliverSimulator
                 .ToList();
             nextPlace = _movingRoutine.GoToTarget(target, simulationContext, possibleCoordinates);
             simulationContext.Rover.CurrentPosition = nextPlace;
+            simulationContext.VisitedPlaces.Add(nextPlace);
         }
         else Finished =!Finished;
     }
