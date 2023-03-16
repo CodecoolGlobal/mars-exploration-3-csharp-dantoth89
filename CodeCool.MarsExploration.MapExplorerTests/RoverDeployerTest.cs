@@ -21,11 +21,11 @@ public class RoverDeployerTest
     public static object[] ConfigCases =
     {
         new object[] {new ConfigurationModel($@"{WorkDir}/Resources/exploration-0.map",
-            new Coordinate(1, 1), new List<string>() { "*", "%" }, 100)},
+            new Coordinate(1, 1), new List<string>() { "*", "%" }, 100, 2,2,3,20,true)},
         new object[] {new ConfigurationModel($@"{WorkDir}/Resources/exploration-1.map",
-            new Coordinate(3, 3), new List<string>() { "@", "~" }, 100)},
+            new Coordinate(3, 3), new List<string>() { "@", "~" }, 100,2,2,3,20,true)},
         new object[] {new ConfigurationModel($@"{WorkDir}/Resources/exploration-2.map",
-                new Coordinate(16, 16), new List<string>() { "÷", "×" }, 100)}
+                new Coordinate(16, 16), new List<string>() { "÷", "×" }, 100,2,2,3,20,true)}
     };
 
 
@@ -33,7 +33,7 @@ public class RoverDeployerTest
     public void TestRoverExists(ConfigurationModel config)
     {
         _roverDeployer = new RoverDeployer(config, _coordinateCalculator);
-        var rover = _roverDeployer.DeployMarsRover(1, _mapLoader.Load(config.MapFilePath));
+        var rover = _roverDeployer.DeployMarsRover(1, _mapLoader.Load(config.MapFilePath), config.LandingSpot);
         Assert.That(rover.GetType(), Is.EqualTo(typeof(MarsRoverModel)));
     }
 
@@ -42,7 +42,7 @@ public class RoverDeployerTest
     {
         _roverDeployer = new RoverDeployer(config, _coordinateCalculator);
         var map = _mapLoader.Load(config.MapFilePath);
-        var rover = _roverDeployer.DeployMarsRover(1, map);
+        var rover = _roverDeployer.DeployMarsRover(1, map, config.LandingSpot);
         var landingCoordinate = rover.CurrentPosition;
         Assert.That(map.Representation[landingCoordinate.X, landingCoordinate.Y], Is.Null);
     }
