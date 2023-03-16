@@ -4,7 +4,7 @@ using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Simulation.Service.Analyzer;
 
-public class LackOfResources:IAnalyzer
+public class LackOfResources : IAnalyzer
 {
     public bool Analyze(SimulationContext simulationContext, IRoverFollower rowerFollower)
     {

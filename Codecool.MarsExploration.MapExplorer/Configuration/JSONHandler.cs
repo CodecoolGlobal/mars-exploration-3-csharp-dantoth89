@@ -30,13 +30,13 @@ public class JSONHandler
         var newConfig = new ConfigurationModel(
             mapWorkDir + source.FilePath,
             new Coordinate(source.LandingSpotX, source.LandingSpotY),
-            neededResource,
-            source.TimeOutSteps,
-            source.RoverCost,
-            source.RoverSight,
-            source.CommandCenterCost,
-            source.CommandCenterSight,
-            source.FileLogger
+            neededResourcesSymbols:neededResource,
+            timeoutSteps:source.TimeOutSteps,
+            roverCost:source.RoverCost,
+            roverSight:source.RoverSight,
+            commandCenterCost:source.CommandCenterCost,
+            commandCenterSight: source.CommandCenterSight,
+            loggerType:source.FileLogger
         );
         return newConfig;
     }

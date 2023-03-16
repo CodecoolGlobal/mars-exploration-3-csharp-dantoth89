@@ -18,7 +18,6 @@ public class MapLoader : IMapLoader
         }
 
         var map = new Map(mapArray, true);
-        return map.Representation.GetLength(0) > 5 ? map :
-            throw new ArgumentException("Error while loading map!");
+        return map.Representation.GetLength(0) > 5 ? map : throw new ArgumentException("Error while loading map!");
     }
 }

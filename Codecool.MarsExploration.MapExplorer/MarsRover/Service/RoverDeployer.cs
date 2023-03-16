@@ -7,7 +7,7 @@ using Codecool.MarsExploration.MapGenerator.MapElements.Service.Placer;
 
 namespace Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 
-public class RoverDeployer:IRoverDeployer
+public class RoverDeployer : IRoverDeployer
 {
     private ConfigurationModel _configuration;
     private ICoordinateCalculator _coordinateCalculator;
@@ -20,12 +20,13 @@ public class RoverDeployer:IRoverDeployer
 
     public MarsRoverModel DeployMarsRover(int numberOfRoversDeployed, Map map, Coordinate landingspotOfDeployer)
     {
-        var landingCoordinate = _coordinateCalculator.GetEmptyAdjacentCoordinates(landingspotOfDeployer, map.Dimension, map, 1)
+        var landingCoordinate = _coordinateCalculator
+            .GetEmptyAdjacentCoordinates(landingspotOfDeployer, map.Dimension, map, 1)
             .ToList()[0];
-        var numberOfRover = numberOfRoversDeployed+1;
+        var numberOfRover = numberOfRoversDeployed + 1;
         var foundResources = new HashSet<(string, Coordinate)>();
-        return new MarsRoverModel($"rover-{numberOfRover}", landingCoordinate, _configuration.RoverSight, foundResources,
+        return new MarsRoverModel($"rover-{numberOfRover}", landingCoordinate, _configuration.RoverSight,
+            foundResources,
             new HashSet<Coordinate>());
     }
-
 }

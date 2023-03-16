@@ -8,5 +8,4 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 public interface IRoverDeployer
 {
     MarsRoverModel DeployMarsRover(int numberOfRoversDeployed, Map map, Coordinate landingSpotOfDeployer);
-
 }

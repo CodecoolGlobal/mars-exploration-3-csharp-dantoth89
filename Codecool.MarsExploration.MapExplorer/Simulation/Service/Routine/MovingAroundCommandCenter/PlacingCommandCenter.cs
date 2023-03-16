@@ -32,11 +32,11 @@ public class PlacingCommandCenter
     {
         var minerals = simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "%");
         var waters = simulationContext.Rover.FoundResources.Where(res => res.foundResourceSymbol == "*");
-            List<List<Coordinate>> listOfAreaLists = new List<List<Coordinate>>();
-            foreach (var mineral in minerals)
+        List<List<Coordinate>> listOfAreaLists = new List<List<Coordinate>>();
+        foreach (var mineral in minerals)
+        {
+            if (minerals.Any() && waters.Any())
             {
-                if (minerals.Any() && waters.Any())
-                {
                 var water = waters.MinBy(water =>
                     Math.Abs(water.foundResourceCoordinate.X - mineral.foundResourceCoordinate.X) +
                     Math.Abs(water.foundResourceCoordinate.Y - mineral.foundResourceCoordinate.Y));
@@ -49,8 +49,10 @@ public class PlacingCommandCenter
                 }
             }
         }
-        return listOfAreaLists.Count()==0? new List<Coordinate>(): listOfAreaLists.MaxBy(list=> list.Count);
+
+        return listOfAreaLists.Count() == 0 ? new List<Coordinate>() : listOfAreaLists.MaxBy(list => list.Count);
     }
+
     private static bool AreBothCoordinatesInSightRange(SimulationContext simulationContext,
         (string foundResourceSymbol, Coordinate foundResourceCoordinate) mineral,
         (string foundResourceSymbol, Coordinate foundResourceCoordinate) water)
@@ -124,10 +126,11 @@ public class PlacingCommandCenter
             cmdCenter = new Command_Center(commandCenters.Count + 1,
                 position,
                 simulationContext.Rover, config,
-                new Dictionary<Resources, Coordinate>() { { Resources.Mineral, _possibleMineral }, { Resources.Water, _possibleWater } });
-           Console.WriteLine($"mineral : {_possibleMineral}, water: {_possibleWater}, cmdC: {cmdCenter.Position}");
+                new Dictionary<Resources, Coordinate>()
+                    { { Resources.Mineral, _possibleMineral }, { Resources.Water, _possibleWater } });
             return cmdCenter;
         }
+
         return cmdCenter;
     }
 }

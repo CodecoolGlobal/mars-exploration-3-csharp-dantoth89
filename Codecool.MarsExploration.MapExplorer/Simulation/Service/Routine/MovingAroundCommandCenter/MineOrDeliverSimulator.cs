@@ -19,6 +19,7 @@ public class MineOrDeliverySimulator : IMineAndDeliverSimulator
     }
 
     Coordinate nextPlace = new Coordinate(-1, -1);
+
     public void MoveSimulator(Coordinate target, SimulationContext simulationContext)
     {
         if (!_coordinateCalculator
@@ -33,6 +34,6 @@ public class MineOrDeliverySimulator : IMineAndDeliverSimulator
             simulationContext.Rover.CurrentPosition = nextPlace;
             simulationContext.VisitedPlaces.Add(nextPlace);
         }
-        else Finished =!Finished;
+        else Finished = !Finished;
     }
 }
