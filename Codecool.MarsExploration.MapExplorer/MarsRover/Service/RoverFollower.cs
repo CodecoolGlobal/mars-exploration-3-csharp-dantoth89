@@ -1,12 +1,14 @@
 using System.Data;
+using Codecool.MarsExploration.MapExplorer.Exploration;
 using Codecool.MarsExploration.MapExplorer.MarsRover.Model;
 using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.MarsRover.Service;
 
-public class RoverFollower:IRoverFollower
+public class RoverFollower : IRoverFollower
 {
     public List<MarsRoverModel> AllMarsRovers { get; set; } = new List<MarsRoverModel>();
+
     public int NumberOfMarsRovers()
     {
         return AllMarsRovers.Count;
@@ -18,7 +20,7 @@ public class RoverFollower:IRoverFollower
         {
             return AllMarsRovers.Find(rover => rover.Id == roverId).CurrentPosition;
         }
-        catch(Exception)
+        catch (Exception)
         {
             return new Coordinate(-1, -1);
         }
@@ -33,5 +35,17 @@ public class RoverFollower:IRoverFollower
         }
 
         return allDiscovered;
+    }
+
+    public HashSet<(string, Coordinate)> AllFoundResources()
+    {
+        var allResources = AllMarsRovers.Select(rover => rover.FoundResources);
+        var hashSet = new HashSet<(string, Coordinate)>();
+        foreach (var resouces in allResources)
+        {
+            hashSet.UnionWith(resouces);
+        }
+
+        return hashSet;
     }
 }
